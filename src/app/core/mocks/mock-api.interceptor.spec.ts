@@ -123,4 +123,65 @@ describe('mockApiInterceptor', () => {
     }
     expect(caught?.status).toBe(409);
   });
+
+  it('updates an employee, handles username changes, and rejects conflicts/unknowns', async () => {
+    const existing = await firstValueFrom(employeeApi.getEmployeeByUsername('budi.santoso'));
+    const updated = await firstValueFrom(
+      employeeApi.updateEmployee('budi.santoso', {
+        ...existing,
+        username: 'budi.updated',
+        firstName: 'Budianto',
+        basicSalary: 16_500_000.25,
+      }),
+    );
+
+    expect(updated.username).toBe('budi.updated');
+    expect(updated.firstName).toBe('Budianto');
+    expect(updated.basicSalary).toBe(16_500_000.25);
+
+    const refetched = await firstValueFrom(employeeApi.getEmployeeByUsername('budi.updated'));
+    expect(refetched.firstName).toBe('Budianto');
+
+    let conflictErr: HttpErrorResponse | undefined;
+    try {
+      await firstValueFrom(
+        employeeApi.updateEmployee('budi.updated', { ...updated, username: 'siti.rahmawati' }),
+      );
+    } catch (err) {
+      conflictErr = err as HttpErrorResponse;
+    }
+    expect(conflictErr?.status).toBe(409);
+
+    let notFoundErr: HttpErrorResponse | undefined;
+    try {
+      await firstValueFrom(employeeApi.updateEmployee('missing.user', updated));
+    } catch (err) {
+      notFoundErr = err as HttpErrorResponse;
+    }
+    expect(notFoundErr?.status).toBe(404);
+  });
+
+  it('deletes an employee and returns 404 when missing', async () => {
+    const deleted = await firstValueFrom(employeeApi.deleteEmployee('siti.rahmawati'));
+    expect(deleted).toEqual({ deleted: true, username: 'siti.rahmawati' });
+
+    const list = await firstValueFrom(employeeApi.getEmployees({ page: 1, pageSize: 10 }));
+    expect(list.total).toBe(119);
+
+    let lookupErr: HttpErrorResponse | undefined;
+    try {
+      await firstValueFrom(employeeApi.getEmployeeByUsername('siti.rahmawati'));
+    } catch (err) {
+      lookupErr = err as HttpErrorResponse;
+    }
+    expect(lookupErr?.status).toBe(404);
+
+    let deleteErr: HttpErrorResponse | undefined;
+    try {
+      await firstValueFrom(employeeApi.deleteEmployee('siti.rahmawati'));
+    } catch (err) {
+      deleteErr = err as HttpErrorResponse;
+    }
+    expect(deleteErr?.status).toBe(404);
+  });
 });
