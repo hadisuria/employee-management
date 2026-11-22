@@ -95,17 +95,17 @@
   }
 }
 
-.cell-username {
+.employee-table td.cell-username {
   color: var(--primary);
   font-weight: 500;
 }
 
-.cell-name {
+.employee-table td.cell-name {
   color: var(--text-primary);
   font-weight: 600;
 }
 
-.cell-salary {
+.employee-table td.cell-salary {
   text-align: right;
   font-weight: 600;
   color: var(--text-primary);

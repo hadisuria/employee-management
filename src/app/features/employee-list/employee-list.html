@@ -108,7 +108,9 @@
             (change)="onMobileSortChange($event)"
           >
             @for (opt of mobileSortOptions; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
+              <option [value]="opt.value" [selected]="opt.value === currentSortValue()">
+                {{ opt.label }}
+              </option>
             }
           </select>
         </div>
@@ -324,7 +326,7 @@
             (change)="onPageSizeChange($event)"
           >
             @for (size of pageSizeOptions; track size) {
-              <option [value]="size">{{ size }}</option>
+              <option [value]="size" [selected]="size === state().pageSize">{{ size }}</option>
             }
           </select>
 
@@ -446,7 +448,9 @@
             (change)="onPageSizeChange($event)"
           >
             @for (size of pageSizeOptions; track size) {
-              <option [value]="size">{{ size }} / page</option>
+              <option [value]="size" [selected]="size === state().pageSize">
+                {{ size }} / page
+              </option>
             }
           </select>
         </div>
