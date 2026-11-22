@@ -337,6 +337,15 @@ a:hover {
   }
 }
 
+.btn-danger-solid {
+  background-color: #dc2626;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background-color: #b91c1c;
+  }
+}
+
 @media (max-width: 959.98px) {
   .page-container {
     padding: 20px 24px 40px;
