@@ -216,6 +216,41 @@ a:hover {
   color: var(--text-secondary);
 }
 
+.search-input-wrap {
+  position: relative;
+
+  .input-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .has-icon {
+    padding-left: 36px;
+  }
+}
+
+.empty-block {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.empty-subtitle {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 .field-error {
   font-size: 12px;
   line-height: 16px;
