@@ -143,27 +143,63 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   if (req.method === 'POST' && req.url === '/api/employees') {
-    const payload = req.body as Employee;
-    const normalizedUsername = payload.username.trim();
+    const payload = normalizeEmployeePayload(req.body as Employee);
     const duplicate = employeesDb.some(
-      (emp) => emp.username.toLowerCase() === normalizedUsername.toLowerCase(),
+      (emp) => emp.username.toLowerCase() === payload.username.toLowerCase(),
     );
 
     if (duplicate) {
       return respondError(409, 'Conflict', 'Username already exists', delayMs);
     }
 
-    const created: Employee = {
-      ...payload,
-      username: normalizedUsername,
-      firstName: payload.firstName.trim(),
-      lastName: payload.lastName.trim(),
-      email: payload.email.trim(),
-    };
-    employeesDb = [created, ...employeesDb];
+    employeesDb = [payload, ...employeesDb];
+    return respondOk(payload, 201, delayMs);
+  }
 
-    return respondOk(created, 201, delayMs);
+  if (req.method === 'PUT' && req.url.startsWith('/api/employees/')) {
+    const requested = decodeURIComponent(req.url.slice('/api/employees/'.length)).toLowerCase();
+    const existingIndex = employeesDb.findIndex((emp) => emp.username.toLowerCase() === requested);
+
+    if (existingIndex === -1) {
+      return respondError(404, 'Not Found', 'Employee not found', delayMs);
+    }
+
+    const updated = normalizeEmployeePayload(req.body as Employee);
+    const duplicate = employeesDb.some(
+      (emp, index) =>
+        index !== existingIndex && emp.username.toLowerCase() === updated.username.toLowerCase(),
+    );
+
+    if (duplicate) {
+      return respondError(409, 'Conflict', 'Username already exists', delayMs);
+    }
+
+    employeesDb = employeesDb.map((emp, index) => (index === existingIndex ? updated : emp));
+    return respondOk(updated, 200, delayMs);
+  }
+
+  if (req.method === 'DELETE' && req.url.startsWith('/api/employees/')) {
+    const requested = decodeURIComponent(req.url.slice('/api/employees/'.length)).toLowerCase();
+    const existingIndex = employeesDb.findIndex((emp) => emp.username.toLowerCase() === requested);
+
+    if (existingIndex === -1) {
+      return respondError(404, 'Not Found', 'Employee not found', delayMs);
+    }
+
+    const removed = employeesDb[existingIndex];
+    employeesDb = employeesDb.filter((_, index) => index !== existingIndex);
+    return respondOk({ deleted: true, username: removed.username }, 200, delayMs);
   }
 
   return next(req);
 };
+
+function normalizeEmployeePayload(payload: Employee): Employee {
+  return {
+    ...payload,
+    username: payload.username.trim(),
+    firstName: payload.firstName.trim(),
+    lastName: payload.lastName.trim(),
+    email: payload.email.trim(),
+  };
+}

@@ -33,6 +33,19 @@ export class EmployeeApiService {
     return this.http.post<Employee>(`${this.baseUrl}/employees`, payload);
   }
 
+  updateEmployee(username: string, payload: Employee): Observable<Employee> {
+    return this.http.put<Employee>(
+      `${this.baseUrl}/employees/${encodeURIComponent(username)}`,
+      payload,
+    );
+  }
+
+  deleteEmployee(username: string): Observable<{ deleted: boolean; username: string }> {
+    return this.http.delete<{ deleted: boolean; username: string }>(
+      `${this.baseUrl}/employees/${encodeURIComponent(username)}`,
+    );
+  }
+
   getGroups(): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/groups`);
   }
