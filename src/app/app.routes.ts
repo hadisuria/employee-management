@@ -22,7 +22,13 @@ export const routes: Routes = [
     path: 'employees/add',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/employee-add/employee-add').then((m) => m.EmployeeAddComponent),
+      import('./features/employee-form/employee-form').then((m) => m.EmployeeFormComponent),
+  },
+  {
+    path: 'employees/:username/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/employee-form/employee-form').then((m) => m.EmployeeFormComponent),
   },
   {
     path: 'employees/:username',

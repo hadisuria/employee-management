@@ -1,4 +1,9 @@
-.add-card {
+.state-card {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.form-card {
   padding: 28px;
 }
 
@@ -70,7 +75,7 @@
 }
 
 @media (max-width: 599.98px) {
-  .add-card {
+  .form-card {
     padding: 20px 16px 84px;
   }
 

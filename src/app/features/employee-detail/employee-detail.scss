@@ -15,11 +15,25 @@
   color: var(--text-secondary);
 }
 
+.detail-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
 .detail-header {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+}
+
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .avatar-circle {
@@ -117,6 +131,16 @@
 }
 
 @media (max-width: 599.98px) {
+  .detail-header-row {
+    align-items: stretch;
+  }
+
+  .detail-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
   .detail-card {
     padding: 20px 16px;
   }

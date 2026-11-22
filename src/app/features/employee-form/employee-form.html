@@ -1,0 +1,237 @@
+<div class="page-container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/employees">Employees</a>
+    <span aria-hidden="true">/</span>
+    @if (isEditMode()) {
+      <a [routerLink]="['/employees', originalUsername() || requestedUsername()]">
+        {{ originalUsername() || requestedUsername() }}
+      </a>
+      <span aria-hidden="true">/</span>
+      <span>Edit</span>
+    } @else {
+      <span>Add</span>
+    }
+  </nav>
+
+  @if (loading()) {
+    <div class="surface-card state-card">
+      <p class="empty-title">Loading employee record...</p>
+      <p class="empty-subtitle">Fetching current employee values.</p>
+    </div>
+  } @else if (notFound()) {
+    <div class="surface-card state-card">
+      <h1 class="empty-title">Employee not found</h1>
+      <p class="empty-subtitle">No employee record matches "{{ requestedUsername() }}".</p>
+      <a routerLink="/employees" class="btn btn-primary">Back to employees</a>
+    </div>
+  } @else {
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">{{ isEditMode() ? 'Edit Employee' : 'Add Employee' }}</h1>
+        <p class="page-subtitle">
+          {{
+            isEditMode()
+              ? 'Update employee details. All fields marked with * are mandatory.'
+              : 'All fields marked with * are mandatory.'
+          }}
+        </p>
+      </div>
+    </div>
+
+    <form class="surface-card form-card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="field-label" for="emp-username">
+            Username<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="emp-username"
+            type="text"
+            class="field-input"
+            formControlName="username"
+            placeholder="e.g. budi.santoso"
+            [class.is-invalid]="form.controls.username.invalid && form.controls.username.touched"
+          />
+          @if (form.controls.username.touched && form.controls.username.errors) {
+            @if (form.controls.username.errors['duplicate']) {
+              <span class="field-error">Username already exists</span>
+            } @else {
+              <span class="field-error">This field is required</span>
+            }
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-firstName">
+            First name<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="emp-firstName"
+            type="text"
+            class="field-input"
+            formControlName="firstName"
+            placeholder="Enter first name"
+            [class.is-invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
+          />
+          @if (form.controls.firstName.touched && form.controls.firstName.errors) {
+            <span class="field-error">This field is required</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-lastName">
+            Last name<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="emp-lastName"
+            type="text"
+            class="field-input"
+            formControlName="lastName"
+            placeholder="Enter last name"
+            [class.is-invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
+          />
+          @if (form.controls.lastName.touched && form.controls.lastName.errors) {
+            <span class="field-error">This field is required</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-email">
+            Email<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="emp-email"
+            type="email"
+            class="field-input"
+            formControlName="email"
+            placeholder="name@company.co.id"
+            [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          />
+          @if (form.controls.email.touched && form.controls.email.errors) {
+            @if (form.controls.email.errors['required']) {
+              <span class="field-error">This field is required</span>
+            } @else {
+              <span class="field-error">Please enter a valid email address</span>
+            }
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-birthDate">
+            Birth date<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="emp-birthDate"
+            type="datetime-local"
+            class="field-input"
+            formControlName="birthDate"
+            [max]="maxDateTime()"
+            [class.is-invalid]="form.controls.birthDate.invalid && form.controls.birthDate.touched"
+          />
+          @if (form.controls.birthDate.touched && form.controls.birthDate.errors) {
+            @if (form.controls.birthDate.errors['maxToday']) {
+              <span class="field-error">Birth date cannot exceed today</span>
+            } @else {
+              <span class="field-error">This field is required</span>
+            }
+          } @else {
+            <span class="field-hint">Must not exceed today</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-basicSalary">
+            Basic salary<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <div
+            class="salary-input-group"
+            [class.is-invalid]="
+              form.controls.basicSalary.invalid && form.controls.basicSalary.touched
+            "
+          >
+            <span class="salary-prefix">Rp</span>
+            <input
+              id="emp-basicSalary"
+              type="text"
+              inputmode="decimal"
+              class="salary-input"
+              formControlName="basicSalary"
+              placeholder="0.00"
+            />
+          </div>
+          @if (form.controls.basicSalary.touched && form.controls.basicSalary.errors) {
+            @if (form.controls.basicSalary.errors['required']) {
+              <span class="field-error">This field is required</span>
+            } @else {
+              <span class="field-error">Basic salary must be a valid number</span>
+            }
+          } @else {
+            <span class="field-hint">Numbers only, up to 2 decimals</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-status">
+            Status<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <select
+            id="emp-status"
+            class="field-select"
+            formControlName="status"
+            [class.is-invalid]="form.controls.status.invalid && form.controls.status.touched"
+          >
+            <option value="" disabled>Select status...</option>
+            @for (st of statusOptions; track st) {
+              <option [value]="st">{{ st }}</option>
+            }
+          </select>
+          @if (form.controls.status.touched && form.controls.status.errors) {
+            <span class="field-error">This field is required</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-group">
+            Group<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <app-searchable-select
+            inputId="emp-group"
+            formControlName="group"
+            [options]="groups()"
+            placeholder="Select group..."
+            searchPlaceholder="Search group..."
+            [invalid]="form.controls.group.invalid && form.controls.group.touched"
+          />
+          @if (form.controls.group.touched && form.controls.group.errors) {
+            <span class="field-error">This field is required</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="emp-description">
+            Description (Timestamp)<span class="required-star" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="emp-description"
+            type="datetime-local"
+            class="field-input"
+            formControlName="description"
+            [class.is-invalid]="
+              form.controls.description.invalid && form.controls.description.touched
+            "
+          />
+          @if (form.controls.description.touched && form.controls.description.errors) {
+            <span class="field-error">This field is required</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/employees" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          {{ submitting() ? 'Saving...' : isEditMode() ? 'Save changes' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

@@ -8,12 +8,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
-import { catchError, debounceTime, finalize, of, Subject, switchMap } from 'rxjs';
+import { catchError, debounceTime, finalize, map, merge, of, Subject, switchMap } from 'rxjs';
 import { EmployeeApiService } from '../../core/api/employee-api.service';
 import { Employee, EmployeeSortField } from '../../core/models/employee.model';
 import { EmployeeListStateService } from '../../core/state/employee-list-state.service';
 import { NotificationService } from '../../core/state/notification.service';
 import { ViewportService } from '../../core/state/viewport.service';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { SearchableSelectComponent } from '../../shared/components/searchable-select/searchable-select';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 import { RupiahPipe } from '../../shared/pipes/rupiah.pipe';
@@ -51,7 +52,13 @@ const MOBILE_SORT_OPTIONS: readonly MobileSortOption[] = [
 @Component({
   selector: 'app-employee-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, SearchableSelectComponent, StatusBadgeComponent, RupiahPipe],
+  imports: [
+    RouterLink,
+    ConfirmDialogComponent,
+    SearchableSelectComponent,
+    StatusBadgeComponent,
+    RupiahPipe,
+  ],
   templateUrl: './employee-list.html',
   styleUrl: './employee-list.scss',
 })
@@ -64,12 +71,15 @@ export class EmployeeListComponent {
   readonly viewport = inject(ViewportService);
 
   private readonly filterInput$ = new Subject<{ field: FilterField; value: string }>();
+  private readonly reload$ = new Subject<void>();
 
   readonly nameInput = signal(this.listState.state().searchName);
   readonly emailInput = signal(this.listState.state().searchEmail);
   readonly employees = signal<Employee[]>([]);
   readonly total = signal(0);
   readonly loading = signal(true);
+  readonly pendingDelete = signal<Employee | null>(null);
+  readonly deleting = signal(false);
 
   readonly groups = toSignal(this.employeeApi.getGroups().pipe(catchError(() => of([]))), {
     initialValue: [] as string[],
@@ -132,7 +142,7 @@ export class EmployeeListComponent {
         this.listState.updateFilters({ [field]: value });
       });
 
-    toObservable(this.listState.state)
+    merge(toObservable(this.listState.state), this.reload$.pipe(map(() => this.state())))
       .pipe(
         switchMap((s) => {
           this.loading.set(true);
@@ -158,6 +168,9 @@ export class EmployeeListComponent {
       .subscribe((res) => {
         this.employees.set(res.items);
         this.total.set(res.total);
+        if (res.page !== this.state().page) {
+          this.listState.setPage(res.page);
+        }
       });
   }
 
@@ -213,11 +226,38 @@ export class EmployeeListComponent {
 
   onEdit(event: Event, employee: Employee): void {
     event.stopPropagation();
-    this.notification.show('warning', `Edit action triggered for ${employee.username}`);
+    void this.router.navigate(['/employees', employee.username, 'edit']);
   }
 
   onDelete(event: Event, employee: Employee): void {
     event.stopPropagation();
-    this.notification.show('danger', `Delete action triggered for ${employee.username}`);
+    this.pendingDelete.set(employee);
+  }
+
+  cancelDelete(): void {
+    if (!this.deleting()) {
+      this.pendingDelete.set(null);
+    }
+  }
+
+  confirmDelete(): void {
+    const target = this.pendingDelete();
+    if (!target || this.deleting()) return;
+
+    this.deleting.set(true);
+    this.employeeApi.deleteEmployee(target.username).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.pendingDelete.set(null);
+        this.notification.show('danger', `Employee ${target.username} deleted`);
+        this.reload$.next();
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.deleting.set(false);
+        this.pendingDelete.set(null);
+        this.notification.show('danger', err?.error?.message ?? 'Failed to delete employee');
+        this.reload$.next();
+      },
+    });
   }
 }

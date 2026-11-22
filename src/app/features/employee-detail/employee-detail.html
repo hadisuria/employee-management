@@ -34,14 +34,74 @@
       <a routerLink="/employees" class="btn btn-primary">Back to employees</a>
     </div>
   } @else if (employee(); as emp) {
-    <div class="detail-header">
-      <div class="avatar-circle" aria-hidden="true">{{ initials() }}</div>
-      <div class="header-text">
-        <div class="title-row">
-          <h1 class="page-title">{{ emp.firstName }} {{ emp.lastName }}</h1>
-          <app-status-badge [status]="emp.status" />
+    <app-confirm-dialog
+      [open]="confirmOpen()"
+      title="Delete employee"
+      [message]="
+        'Delete ' +
+        emp.firstName +
+        ' ' +
+        emp.lastName +
+        ' (' +
+        emp.username +
+        ')? This removes the record from the current session.'
+      "
+      confirmLabel="Delete"
+      [busy]="deleting()"
+      busyLabel="Deleting..."
+      (cancel)="cancelDelete()"
+      (confirm)="confirmDelete()"
+    />
+
+    <div class="detail-header-row">
+      <div class="detail-header">
+        <div class="avatar-circle" aria-hidden="true">{{ initials() }}</div>
+        <div class="header-text">
+          <div class="title-row">
+            <h1 class="page-title">{{ emp.firstName }} {{ emp.lastName }}</h1>
+            <app-status-badge [status]="emp.status" />
+          </div>
+          <p class="page-subtitle">{{ emp.email }} · {{ emp.group }}</p>
         </div>
-        <p class="page-subtitle">{{ emp.email }} · {{ emp.group }}</p>
+      </div>
+
+      <div class="detail-actions">
+        <a [routerLink]="['/employees', emp.username, 'edit']" class="btn btn-edit">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+          </svg>
+          <span>Edit</span>
+        </a>
+        <button type="button" class="btn btn-delete" (click)="openDeleteConfirm()">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            />
+          </svg>
+          <span>Delete</span>
+        </button>
       </div>
     </div>
 

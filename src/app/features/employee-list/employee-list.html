@@ -1,3 +1,22 @@
+<app-confirm-dialog
+  [open]="pendingDelete() !== null"
+  title="Delete employee"
+  [message]="
+    'Delete ' +
+    (pendingDelete()?.firstName ?? '') +
+    ' ' +
+    (pendingDelete()?.lastName ?? '') +
+    ' (' +
+    (pendingDelete()?.username ?? '') +
+    ')? This removes the record from the current session.'
+  "
+  confirmLabel="Delete"
+  [busy]="deleting()"
+  busyLabel="Deleting..."
+  (cancel)="cancelDelete()"
+  (confirm)="confirmDelete()"
+/>
+
 <div class="page-container">
   <div class="page-header">
     <div>
