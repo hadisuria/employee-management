@@ -10,10 +10,10 @@ HR backoffice Single Page Application built with Angular 21, standalone componen
   - Multi-parameter **AND** search (`Name / Username`, `Email`, searchable `Group` dropdown) plus `Reset filters`.
   - Server-style sorting across `Username`, `Name`, `Email`, `Group`, `Basic Salary`, and `Status`.
   - Page size selector (`10`, `25`, `50`, `100`) and pagination controls.
-  - Row **Edit** (amber warning toast) and **Delete** (red danger toast) actions.
+  - Row **Edit** (navigates to `/employees/:username/edit`) and **Delete** (confirmation modal, red danger toast, and live list refresh).
   - Responsive layout powered by `@angular/cdk/layout` (`Breakpoints.XSmall` renders stacked mobile cards and a mobile navigation drawer).
-- **Add Employee (`/employees/add`):** 2-column desktop / 1-column mobile Reactive Form with 9 mandatory fields, `birthDate <= today` validation, decimal salary validation, custom searchable group selector, and session persistence.
-- **Employee Detail (`/employees/:username`):** Structured detail card formatting salaries as `Rp. xx.xxx,xx` (`RupiahPipe`), formatted timestamps, unknown-user fallback, and `OK` navigation preserving previous list filters, sort, and page state.
+- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Reactive Form (`EmployeeFormComponent`) with 9 mandatory fields, `birthDate <= today` validation, decimal salary validation, custom searchable group selector, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
+- **Employee Detail (`/employees/:username`):** Structured detail card formatting salaries as `Rp. xx.xxx,xx` (`RupiahPipe`), formatted timestamps, quick **Edit** and **Delete** actions, unknown-user fallback, and `OK` navigation preserving previous list filters, sort, and page state.
 
 ## Environment
 
@@ -46,7 +46,7 @@ Open `http://localhost:4200` in your browser.
 
 ## Switching to a Real Backend
 
-API calls live in `src/app/core/api/` (`AuthApiService` and `EmployeeApiService`) and use standard Angular `HttpClient`. During local/standalone runs without a backend, requests to `/api/*` are handled by `mockApiInterceptor` registered in `environment.httpInterceptors`.
+API calls live in `src/app/core/api/` (`AuthApiService` and `EmployeeApiService`) and use standard Angular `HttpClient` (`POST /api/auth/login`, `GET /api/groups`, `GET/POST /api/employees`, `GET/PUT/DELETE /api/employees/:username`). During local/standalone runs without a backend, requests to `/api/*` are handled by `mockApiInterceptor` registered in `environment.httpInterceptors`.
 
 To connect a real REST backend in production:
 
