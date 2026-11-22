@@ -1,12 +1,16 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthStateService } from './core/state/auth-state.service';
+import { NavbarComponent } from './shared/components/navbar/navbar';
+import { ToastNotificationComponent } from './shared/components/toast-notification/toast-notification';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterOutlet, NavbarComponent, ToastNotificationComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('employee-management');
+  readonly authState = inject(AuthStateService);
 }
