@@ -1,0 +1,106 @@
+<div class="page-container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/employees">Employees</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ employee()?.username ?? (requestedUsername() || 'Detail') }}</span>
+  </nav>
+
+  @if (loading()) {
+    <div class="surface-card state-card">
+      <p class="empty-title">Loading employee details...</p>
+      <p class="empty-subtitle">Fetching employee record.</p>
+    </div>
+  } @else if (notFound()) {
+    <div class="surface-card state-card">
+      <div class="not-found-icon" aria-hidden="true">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <line x1="17" y1="8" x2="22" y2="13" />
+          <line x1="22" y1="8" x2="17" y2="13" />
+        </svg>
+      </div>
+      <h1 class="empty-title">Employee not found</h1>
+      <p class="empty-subtitle">No employee record matches "{{ requestedUsername() }}".</p>
+      <a routerLink="/employees" class="btn btn-primary">Back to employees</a>
+    </div>
+  } @else if (employee(); as emp) {
+    <div class="detail-header">
+      <div class="avatar-circle" aria-hidden="true">{{ initials() }}</div>
+      <div class="header-text">
+        <div class="title-row">
+          <h1 class="page-title">{{ emp.firstName }} {{ emp.lastName }}</h1>
+          <app-status-badge [status]="emp.status" />
+        </div>
+        <p class="page-subtitle">{{ emp.email }} · {{ emp.group }}</p>
+      </div>
+    </div>
+
+    <section class="surface-card detail-card" aria-label="Employee attributes">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Username</span>
+          <span class="detail-value">{{ emp.username }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">First name</span>
+          <span class="detail-value">{{ emp.firstName }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Last name</span>
+          <span class="detail-value">{{ emp.lastName }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Email</span>
+          <a class="detail-link" [href]="'mailto:' + emp.email">{{ emp.email }}</a>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Birth date</span>
+          <span class="detail-value">{{ emp.birthDate | date: 'dd MMM yyyy, HH:mm' }}</span>
+        </div>
+
+        <div class="detail-item salary-highlight">
+          <span class="detail-label">Basic salary</span>
+          <span class="salary-value">{{ emp.basicSalary | rupiah }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <div class="status-wrap">
+            <app-status-badge [status]="emp.status" />
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Group</span>
+          <span class="detail-value">{{ emp.group }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Description (Timestamp)</span>
+          <span class="detail-value">{{ emp.description | date: 'dd MMM yyyy, HH:mm' }}</span>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <span class="footer-note">
+          Returning to Employees preserves your previous search &amp; sort state.
+        </span>
+        <button type="button" class="btn btn-primary ok-btn" (click)="goBack()">OK</button>
+      </div>
+    </section>
+  }
+</div>

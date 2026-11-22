@@ -1,0 +1,132 @@
+.state-card {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.not-found-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background-color: var(--bg-canvas);
+  color: var(--text-secondary);
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--bg-tint);
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-card {
+  padding: 28px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.detail-link {
+  font-size: 14px;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.salary-highlight {
+  padding: 12px 16px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-subtle);
+}
+
+.salary-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.status-wrap {
+  display: inline-flex;
+}
+
+.detail-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.footer-note {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ok-btn {
+  min-width: 112px;
+}
+
+@media (max-width: 599.98px) {
+  .detail-card {
+    padding: 20px 16px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ok-btn {
+    width: 100%;
+  }
+}

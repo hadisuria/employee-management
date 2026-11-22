@@ -19,6 +19,18 @@ export const routes: Routes = [
       import('./features/employee-list/employee-list').then((m) => m.EmployeeListComponent),
   },
   {
+    path: 'employees/add',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/employee-add/employee-add').then((m) => m.EmployeeAddComponent),
+  },
+  {
+    path: 'employees/:username',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/employee-detail/employee-detail').then((m) => m.EmployeeDetailComponent),
+  },
+  {
     path: '**',
     redirectTo: 'employees',
   },
