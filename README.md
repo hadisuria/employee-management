@@ -1,59 +1,57 @@
 # Employee Management
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.30.
+HR backoffice Single Page Application built with Angular 21, standalone components, Angular Signals, Reactive Forms, and `@angular/cdk/layout` responsive breakpoints.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Authentication (`/login`):** Reactive Form validation, password visibility toggle, inline error states, loading state, `sessionStorage`-backed session state, and route guards (`authGuard` / `guestGuard`).
+- **Employee List (`/employees`):**
+  - 120 deterministic dummy employees seeded across 10 groups (`src/app/core/data/`).
+  - Multi-parameter **AND** search (`Name / Username`, `Email`, searchable `Group` dropdown) plus `Reset filters`.
+  - Server-style sorting across `Username`, `Name`, `Email`, `Group`, `Basic Salary`, and `Status`.
+  - Page size selector (`10`, `25`, `50`, `100`) and pagination controls.
+  - Row **Edit** (amber warning toast) and **Delete** (red danger toast) actions.
+  - Responsive layout powered by `@angular/cdk/layout` (`Breakpoints.XSmall` renders stacked mobile cards and a mobile navigation drawer).
+- **Add Employee (`/employees/add`):** 2-column desktop / 1-column mobile Reactive Form with 9 mandatory fields, `birthDate <= today` validation, decimal salary validation, custom searchable group selector, and session persistence.
+- **Employee Detail (`/employees/:username`):** Structured detail card formatting salaries as `Rp. xx.xxx,xx` (`RupiahPipe`), formatted timestamps, unknown-user fallback, and `OK` navigation preserving previous list filters, sort, and page state.
 
-```bash
-ng serve
-```
+## Environment
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Node.js:** `v20.19.2`
+- **npm:** `10.8.2`
+- **Angular:** `^21.2.0` (`@angular/cli` `21.2.30`, `@angular/material` `^21.2.14`)
+- **Test Runner:** Vitest (`^4.0.8`)
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Getting Started
 
 ```bash
-ng build
+git clone https://github.com/hadisuria/employee-management.git
+cd employee-management
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open `http://localhost:4200` in your browser.
 
-## Running unit tests
+### Demo Login Credentials
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+- **Username:** `admin`
+- **Password:** `admin123`
 
-```bash
-ng test
-```
+## Scripts
 
-## Running end-to-end tests
+- `npm start` — Run local dev server at `http://localhost:4200`
+- `npm run build` — Build production bundle into `dist/employee-management`
+- `npm test -- --watch=false` — Run Vitest unit tests
 
-For end-to-end (e2e) testing, run:
+## Switching to a Real Backend
 
-```bash
-ng e2e
-```
+API calls live in `src/app/core/api/` (`AuthApiService` and `EmployeeApiService`) and use standard Angular `HttpClient`. During local/standalone runs without a backend, requests to `/api/*` are handled by `mockApiInterceptor` registered in `environment.httpInterceptors`.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+To connect a real REST backend in production:
 
-## Additional Resources
+1. Open `src/environments/environment.ts`.
+2. Set `apiBaseUrl` to your backend URL.
+3. Remove `mockApiInterceptor` from `httpInterceptors` (leaving `[authInterceptor]`).
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Angular's `fileReplacements` configuration automatically tree-shakes the mock interceptor and dummy seed datasets out of the production bundle when `mockApiInterceptor` is removed from `environment.ts`.
