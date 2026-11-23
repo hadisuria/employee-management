@@ -132,7 +132,7 @@
               }
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
               <mat-label>Basic salary</mat-label>
               <span matTextPrefix>Rp&nbsp;</span>
               <input
@@ -144,7 +144,7 @@
                 placeholder="0,00"
                 required
               />
-              <mat-hint>Numbers only, up to 2 decimals using ',' (e.g. 10.000.000,50)</mat-hint>
+              <mat-hint>Up to 2 decimals, e.g. 10.000.000,50</mat-hint>
               @if (form.controls.basicSalary.touched && form.controls.basicSalary.errors) {
                 <mat-error>
                   @if (form.controls.basicSalary.errors['required']) {
