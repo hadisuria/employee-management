@@ -7,6 +7,18 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, debounceTime, finalize, map, merge, of, Subject, switchMap } from 'rxjs';
 import { EmployeeApiService } from '../../core/api/employee-api.service';
@@ -14,7 +26,10 @@ import { Employee, EmployeeSortField } from '../../core/models/employee.model';
 import { EmployeeListStateService } from '../../core/state/employee-list-state.service';
 import { NotificationService } from '../../core/state/notification.service';
 import { ViewportService } from '../../core/state/viewport.service';
-import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData,
+} from '../../shared/components/confirm-dialog/confirm-dialog';
 import { SearchableSelectComponent } from '../../shared/components/searchable-select/searchable-select';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 import { RupiahPipe } from '../../shared/pipes/rupiah.pipe';
@@ -54,7 +69,17 @@ const MOBILE_SORT_OPTIONS: readonly MobileSortOption[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    ConfirmDialogComponent,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatTooltipModule,
     SearchableSelectComponent,
     StatusBadgeComponent,
     RupiahPipe,
@@ -67,6 +92,7 @@ export class EmployeeListComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly employeeApi = inject(EmployeeApiService);
   private readonly notification = inject(NotificationService);
+  private readonly dialog = inject(MatDialog);
   readonly listState = inject(EmployeeListStateService);
   readonly viewport = inject(ViewportService);
 
@@ -78,14 +104,22 @@ export class EmployeeListComponent {
   readonly employees = signal<Employee[]>([]);
   readonly total = signal(0);
   readonly loading = signal(true);
-  readonly pendingDelete = signal<Employee | null>(null);
   readonly deleting = signal(false);
 
   readonly groups = toSignal(this.employeeApi.getGroups().pipe(catchError(() => of([]))), {
     initialValue: [] as string[],
   });
 
-  readonly pageSizeOptions = [10, 25, 50, 100] as const;
+  readonly displayedColumns = [
+    'username',
+    'name',
+    'email',
+    'group',
+    'basicSalary',
+    'status',
+    'actions',
+  ];
+  readonly pageSizeOptions = [10, 25, 50, 100];
   readonly mobileSortOptions = MOBILE_SORT_OPTIONS;
   readonly state = this.listState.state;
 
@@ -94,45 +128,9 @@ export class EmployeeListComponent {
     return Boolean(s.searchName || s.searchEmail || s.searchGroup);
   });
 
-  readonly totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.total() / this.state().pageSize)),
-  );
-
   readonly currentSortValue = computed(() => {
     const s = this.state();
     return s.sortField ? `${s.sortField}:${s.sortDirection}` : '';
-  });
-
-  readonly rangeStart = computed(() => {
-    const total = this.total();
-    if (total === 0) return 0;
-    return (this.state().page - 1) * this.state().pageSize + 1;
-  });
-
-  readonly rangeEnd = computed(() => {
-    const total = this.total();
-    if (total === 0) return 0;
-    return Math.min(total, this.state().page * this.state().pageSize);
-  });
-
-  readonly paginationItems = computed<(number | 'ellipsis')[]>(() => {
-    const total = this.totalPages();
-    const current = this.state().page;
-
-    if (total <= 7) {
-      return Array.from({ length: total }, (_, i) => i + 1);
-    }
-
-    const pages: (number | 'ellipsis')[] = [1];
-    const start = Math.max(2, current - 1);
-    const end = Math.min(total - 1, current + 1);
-
-    if (start > 2) pages.push('ellipsis');
-    for (let p = start; p <= end; p++) pages.push(p);
-    if (end < total - 1) pages.push('ellipsis');
-    pages.push(total);
-
-    return pages;
   });
 
   constructor() {
@@ -194,30 +192,27 @@ export class EmployeeListComponent {
     this.listState.resetFilters();
   }
 
-  onSortColumn(field: EmployeeSortField): void {
-    this.listState.toggleSort(field);
+  onMatSortChange(sort: Sort): void {
+    if (!sort.direction) {
+      this.listState.setSort('', 'asc');
+      return;
+    }
+    this.listState.setSort(sort.active as EmployeeSortField, sort.direction);
   }
 
-  onMobileSortChange(event: Event): void {
-    const selectedValue = (event.target as HTMLSelectElement).value;
+  onMobileSortChange(selectedValue: string): void {
     const match = MOBILE_SORT_OPTIONS.find((opt) => opt.value === selectedValue);
     if (match) {
       this.listState.setSort(match.field, match.direction);
     }
   }
 
-  onPageSizeChange(event: Event): void {
-    const size = Number((event.target as HTMLSelectElement).value);
-    if (size > 0) {
-      this.listState.setPageSize(size);
+  onPageChange(event: PageEvent): void {
+    if (event.pageSize !== this.state().pageSize) {
+      this.listState.setPageSize(event.pageSize);
+      return;
     }
-  }
-
-  goToPage(page: number): void {
-    const target = Math.min(Math.max(1, page), this.totalPages());
-    if (target !== this.state().page) {
-      this.listState.setPage(target);
-    }
+    this.listState.setPage(event.pageIndex + 1);
   }
 
   openDetail(username: string): void {
@@ -231,30 +226,40 @@ export class EmployeeListComponent {
 
   onDelete(event: Event, employee: Employee): void {
     event.stopPropagation();
-    this.pendingDelete.set(employee);
+    if (this.deleting()) return;
+
+    const data: ConfirmDialogData = {
+      title: 'Delete employee',
+      message: `Delete ${employee.firstName} ${employee.lastName} (${employee.username})? This removes the record from the current session.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      data,
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.executeDelete(employee);
+        }
+      });
   }
 
-  cancelDelete(): void {
-    if (!this.deleting()) {
-      this.pendingDelete.set(null);
-    }
-  }
-
-  confirmDelete(): void {
-    const target = this.pendingDelete();
-    if (!target || this.deleting()) return;
-
+  private executeDelete(target: Employee): void {
     this.deleting.set(true);
     this.employeeApi.deleteEmployee(target.username).subscribe({
       next: () => {
         this.deleting.set(false);
-        this.pendingDelete.set(null);
         this.notification.show('danger', `Employee ${target.username} deleted`);
         this.reload$.next();
       },
       error: (err: { error?: { message?: string } }) => {
         this.deleting.set(false);
-        this.pendingDelete.set(null);
         this.notification.show('danger', err?.error?.message ?? 'Failed to delete employee');
         this.reload$.next();
       },

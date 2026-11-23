@@ -1,112 +1,57 @@
-<app-confirm-dialog
-  [open]="pendingDelete() !== null"
-  title="Delete employee"
-  [message]="
-    'Delete ' +
-    (pendingDelete()?.firstName ?? '') +
-    ' ' +
-    (pendingDelete()?.lastName ?? '') +
-    ' (' +
-    (pendingDelete()?.username ?? '') +
-    ')? This removes the record from the current session.'
-  "
-  confirmLabel="Delete"
-  [busy]="deleting()"
-  busyLabel="Deleting..."
-  (cancel)="cancelDelete()"
-  (confirm)="confirmDelete()"
-/>
-
-<div class="page-container">
-  <div class="page-header">
-    <div>
+<div class="page-shell">
+  <header class="page-header">
+    <div class="title-group">
       <h1 class="page-title">Employees</h1>
-      <p class="page-subtitle">Manage your workforce directory and records</p>
+      <span class="record-count">{{ total() }} records</span>
     </div>
 
-    <a routerLink="/employees/add" class="btn btn-primary add-employee-btn">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
+    <div class="header-actions">
+      <button
+        matButton="outlined"
+        type="button"
+        (click)="listState.toggleSalaryVisibility()"
       >
-        <line x1="12" y1="5" x2="12" y2="19" />
-        <line x1="5" y1="12" x2="19" y2="12" />
-      </svg>
-      <span>Add Employee</span>
-    </a>
-  </div>
+        <mat-icon>{{ listState.showSalary() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        {{ listState.showSalary() ? 'Hide salary' : 'Show salary' }}
+      </button>
 
-  <section class="surface-card filter-card" aria-label="Filter employees">
-    <div class="filter-grid">
-      <div class="form-field">
-        <label class="field-label" for="filter-name">Name / Username</label>
-        <div class="search-input-wrap">
-          <svg
-            class="input-icon"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+      <a matButton="filled" routerLink="/employees/add">
+        <mat-icon>add</mat-icon>
+        Add employee
+      </a>
+    </div>
+  </header>
+
+  <mat-card appearance="outlined" class="filter-card">
+    <mat-card-content>
+      <div class="filter-grid">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Name or username</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
           <input
-            id="filter-name"
+            matInput
             type="text"
-            class="field-input has-icon"
-            placeholder="Search name or username..."
+            placeholder="Search name or username"
             [value]="nameInput()"
             (input)="onTextFilter('searchName', $event)"
           />
-        </div>
-      </div>
+        </mat-form-field>
 
-      <div class="form-field">
-        <label class="field-label" for="filter-email">Email</label>
-        <div class="search-input-wrap">
-          <svg
-            class="input-icon"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
           <input
-            id="filter-email"
+            matInput
             type="text"
-            class="field-input has-icon"
-            placeholder="Filter by email..."
+            placeholder="Filter by email"
             [value]="emailInput()"
             (input)="onTextFilter('searchEmail', $event)"
           />
-        </div>
-      </div>
+        </mat-form-field>
 
-      <div class="form-field">
-        <label class="field-label" for="filter-group">Group</label>
         <app-searchable-select
-          inputId="filter-group"
+          label="Group"
+          subscriptSizing="dynamic"
           [options]="groups()"
           [value]="state().searchGroup"
           [allowClear]="true"
@@ -115,385 +60,219 @@
           searchPlaceholder="Search group..."
           (valueChange)="onGroupFilterChange($event)"
         />
-      </div>
 
-      @if (viewport.isMobile()) {
-        <div class="form-field">
-          <label class="field-label" for="mobile-sort">Sort by</label>
-          <select
-            id="mobile-sort"
-            class="field-select"
-            [value]="currentSortValue()"
-            (change)="onMobileSortChange($event)"
-          >
-            @for (opt of mobileSortOptions; track opt.value) {
-              <option [value]="opt.value" [selected]="opt.value === currentSortValue()">
-                {{ opt.label }}
-              </option>
-            }
-          </select>
-        </div>
-      }
+        @if (viewport.isMobile()) {
+          <mat-form-field subscriptSizing="dynamic">
+            <mat-label>Sort by</mat-label>
+            <mat-select
+              [value]="currentSortValue()"
+              (selectionChange)="onMobileSortChange($event.value)"
+            >
+              @for (opt of mobileSortOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
 
-      <div class="reset-wrap">
         <button
+          matButton="outlined"
           type="button"
-          class="btn btn-ghost reset-btn"
+          class="reset-btn"
           [disabled]="!hasActiveFilters()"
           (click)="onResetFilters()"
         >
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="1 4 1 10 7 10" />
-            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-          </svg>
-          <span>Reset filters</span>
+          <mat-icon>restart_alt</mat-icon>
+          Reset
         </button>
       </div>
-    </div>
-
-    <p class="filter-caption">
-      Filters combine with AND logic across all fields. Click any employee row to view details.
-    </p>
-  </section>
+    </mat-card-content>
+  </mat-card>
 
   @if (!viewport.isMobile()) {
-    <section class="surface-card table-card" aria-label="Employee table">
+    <mat-card appearance="outlined" class="table-card">
+      @if (loading()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+
       @if (employees().length === 0 && !loading()) {
         <div class="empty-block">
-          <p class="empty-title">No employees match your filters</p>
-          <p class="empty-subtitle">Try adjusting or clearing your active search filters.</p>
-          <button type="button" class="btn btn-outline" (click)="onResetFilters()">
+          <p class="empty-title">No matching employees</p>
+          <button matButton="outlined" type="button" (click)="onResetFilters()">
             Reset filters
           </button>
         </div>
       } @else {
         <div class="table-scroll" [class.is-loading]="loading()">
-          <table class="employee-table">
-            <thead>
-              <tr>
-                <th [class.is-sorted]="state().sortField === 'username'">
-                  <button type="button" class="sort-btn" (click)="onSortColumn('username')">
-                    <span>Username</span>
-                    <span class="sort-indicator">{{
-                      state().sortField === 'username'
-                        ? state().sortDirection === 'asc'
-                          ? '▲'
-                          : '▼'
-                        : '⇅'
-                    }}</span>
-                  </button>
-                </th>
-                <th [class.is-sorted]="state().sortField === 'name'">
-                  <button type="button" class="sort-btn" (click)="onSortColumn('name')">
-                    <span>Name</span>
-                    <span class="sort-indicator">{{
-                      state().sortField === 'name'
-                        ? state().sortDirection === 'asc'
-                          ? '▲'
-                          : '▼'
-                        : '⇅'
-                    }}</span>
-                  </button>
-                </th>
-                <th [class.is-sorted]="state().sortField === 'email'">
-                  <button type="button" class="sort-btn" (click)="onSortColumn('email')">
-                    <span>Email</span>
-                    <span class="sort-indicator">{{
-                      state().sortField === 'email'
-                        ? state().sortDirection === 'asc'
-                          ? '▲'
-                          : '▼'
-                        : '⇅'
-                    }}</span>
-                  </button>
-                </th>
-                <th [class.is-sorted]="state().sortField === 'group'">
-                  <button type="button" class="sort-btn" (click)="onSortColumn('group')">
-                    <span>Group</span>
-                    <span class="sort-indicator">{{
-                      state().sortField === 'group'
-                        ? state().sortDirection === 'asc'
-                          ? '▲'
-                          : '▼'
-                        : '⇅'
-                    }}</span>
-                  </button>
-                </th>
-                <th class="col-salary" [class.is-sorted]="state().sortField === 'basicSalary'">
+          <table
+            mat-table
+            [dataSource]="employees()"
+            matSort
+            [matSortActive]="state().sortField"
+            [matSortDirection]="state().sortField ? state().sortDirection : ''"
+            (matSortChange)="onMatSortChange($event)"
+          >
+            <ng-container matColumnDef="username">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+              <td mat-cell *matCellDef="let emp" class="cell-username">{{ emp.username }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let emp" class="cell-name">
+                {{ emp.firstName }} {{ emp.lastName }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+              <td mat-cell *matCellDef="let emp">{{ emp.email }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="group">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Group</th>
+              <td mat-cell *matCellDef="let emp">{{ emp.group }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="basicSalary">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="col-salary">
+                Basic Salary
+              </th>
+              <td mat-cell *matCellDef="let emp" class="cell-salary">
+                @if (listState.showSalary()) {
+                  {{ emp.basicSalary | rupiah }}
+                } @else {
+                  <span class="masked-salary" aria-label="Salary hidden">Rp. ••••••••</span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+              <td mat-cell *matCellDef="let emp">
+                <app-status-badge [status]="emp.status" />
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="col-actions">Actions</th>
+              <td mat-cell *matCellDef="let emp" class="cell-actions">
+                <div class="action-group">
                   <button
+                    matIconButton
                     type="button"
-                    class="sort-btn sort-btn-right"
-                    (click)="onSortColumn('basicSalary')"
+                    matTooltip="Edit"
+                    [attr.aria-label]="'Edit ' + emp.username"
+                    (click)="onEdit($event, emp)"
                   >
-                    <span>Basic Salary</span>
-                    <span class="sort-indicator">{{
-                      state().sortField === 'basicSalary'
-                        ? state().sortDirection === 'asc'
-                          ? '▲'
-                          : '▼'
-                        : '⇅'
-                    }}</span>
+                    <mat-icon>edit</mat-icon>
                   </button>
-                </th>
-                <th [class.is-sorted]="state().sortField === 'status'">
-                  <button type="button" class="sort-btn" (click)="onSortColumn('status')">
-                    <span>Status</span>
-                    <span class="sort-indicator">{{
-                      state().sortField === 'status'
-                        ? state().sortDirection === 'asc'
-                          ? '▲'
-                          : '▼'
-                        : '⇅'
-                    }}</span>
+                  <button
+                    matIconButton
+                    type="button"
+                    class="delete-icon-btn"
+                    matTooltip="Delete"
+                    [attr.aria-label]="'Delete ' + emp.username"
+                    (click)="onDelete($event, emp)"
+                  >
+                    <mat-icon>delete_outline</mat-icon>
                   </button>
-                </th>
-                <th class="col-actions">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (emp of employees(); track emp.username) {
-                <tr
-                  class="employee-row"
-                  tabindex="0"
-                  (click)="openDetail(emp.username)"
-                  (keydown.enter)="openDetail(emp.username)"
-                >
-                  <td class="cell-username">{{ emp.username }}</td>
-                  <td class="cell-name">{{ emp.firstName }} {{ emp.lastName }}</td>
-                  <td class="cell-email">{{ emp.email }}</td>
-                  <td>{{ emp.group }}</td>
-                  <td class="cell-salary">{{ emp.basicSalary | rupiah }}</td>
-                  <td><app-status-badge [status]="emp.status" /></td>
-                  <td class="cell-actions">
-                    <div class="action-group">
-                      <button
-                        type="button"
-                        class="icon-action btn-edit"
-                        [attr.aria-label]="'Edit ' + emp.username"
-                        title="Edit"
-                        (click)="onEdit($event, emp)"
-                      >
-                        <svg
-                          width="15"
-                          height="15"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true"
-                        >
-                          <path d="M12 20h9" />
-                          <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        class="icon-action btn-delete"
-                        [attr.aria-label]="'Delete ' + emp.username"
-                        title="Delete"
-                        (click)="onDelete($event, emp)"
-                      >
-                        <svg
-                          width="15"
-                          height="15"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true"
-                        >
-                          <polyline points="3 6 5 6 21 6" />
-                          <path
-                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              class="employee-row"
+              tabindex="0"
+              (click)="openDetail(row.username)"
+              (keydown.enter)="openDetail(row.username)"
+            ></tr>
           </table>
         </div>
       }
 
-      <div class="table-footer">
-        <span class="summary-text">
-          Showing {{ rangeStart() }}–{{ rangeEnd() }} of {{ total() }} employees
-        </span>
-
-        <div class="pagination-controls">
-          <label class="rows-label" for="page-size-select">Rows per page</label>
-          <select
-            id="page-size-select"
-            class="field-select page-size-select"
-            [value]="state().pageSize"
-            (change)="onPageSizeChange($event)"
-          >
-            @for (size of pageSizeOptions; track size) {
-              <option [value]="size" [selected]="size === state().pageSize">{{ size }}</option>
-            }
-          </select>
-
-          <div class="page-buttons">
-            <button
-              type="button"
-              class="page-btn"
-              [disabled]="state().page <= 1"
-              (click)="goToPage(state().page - 1)"
-            >
-              ‹ Prev
-            </button>
-
-            @for (item of paginationItems(); track $index) {
-              @if (item === 'ellipsis') {
-                <span class="page-ellipsis">…</span>
-              } @else {
-                <button
-                  type="button"
-                  class="page-btn page-num"
-                  [class.is-active]="item === state().page"
-                  (click)="goToPage(item)"
-                >
-                  {{ item }}
-                </button>
-              }
-            }
-
-            <button
-              type="button"
-              class="page-btn"
-              [disabled]="state().page >= totalPages()"
-              (click)="goToPage(state().page + 1)"
-            >
-              Next ›
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+      <mat-paginator
+        [length]="total()"
+        [pageIndex]="state().page - 1"
+        [pageSize]="state().pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        showFirstLastButtons
+        aria-label="Employee pagination"
+        (page)="onPageChange($event)"
+      />
+    </mat-card>
   } @else {
     <section class="mobile-cards" [class.is-loading]="loading()" aria-label="Employee cards">
+      @if (loading()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+
       @for (emp of employees(); track emp.username) {
-        <article class="surface-card employee-card" (click)="openDetail(emp.username)">
-          <div class="card-top">
-            <div>
-              <div class="card-name">{{ emp.firstName }} {{ emp.lastName }}</div>
-              <div class="card-username">&#64;{{ emp.username }}</div>
+        <mat-card appearance="outlined" class="employee-card" (click)="openDetail(emp.username)">
+          <mat-card-content>
+            <div class="card-top">
+              <div>
+                <div class="card-name">{{ emp.firstName }} {{ emp.lastName }}</div>
+                <div class="card-username">&#64;{{ emp.username }}</div>
+              </div>
+              <app-status-badge [status]="emp.status" />
             </div>
-            <app-status-badge [status]="emp.status" />
-          </div>
 
-          <div class="card-meta">
-            <div>{{ emp.email }}</div>
-            <div>Group: {{ emp.group }}</div>
-            <div class="card-salary">{{ emp.basicSalary | rupiah }}</div>
-          </div>
+            <div class="card-meta">
+              <div>{{ emp.email }}</div>
+              <div>{{ emp.group }}</div>
+              <div class="card-salary">
+                @if (listState.showSalary()) {
+                  {{ emp.basicSalary | rupiah }}
+                } @else {
+                  <span class="masked-salary" aria-label="Salary hidden">Rp. ••••••••</span>
+                }
+              </div>
+            </div>
 
-          <div class="card-actions">
-            <button type="button" class="btn btn-edit" (click)="onEdit($event, emp)">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
+            <div class="card-actions">
+              <button matButton="tonal" type="button" (click)="onEdit($event, emp)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button
+                matButton="outlined"
+                type="button"
+                class="delete-mobile-btn"
+                (click)="onDelete($event, emp)"
               >
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-              </svg>
-              <span>Edit</span>
-            </button>
-            <button type="button" class="btn btn-delete" (click)="onDelete($event, emp)">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path
-                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                />
-              </svg>
-              <span>Delete</span>
-            </button>
-          </div>
-        </article>
+                <mat-icon>delete_outline</mat-icon>
+                Delete
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
       } @empty {
         @if (!loading()) {
-          <div class="surface-card empty-block">
-            <p class="empty-title">No employees match your filters</p>
-            <p class="empty-subtitle">Try adjusting or clearing your active search filters.</p>
-            <button type="button" class="btn btn-outline" (click)="onResetFilters()">
-              Reset filters
-            </button>
-          </div>
+          <mat-card appearance="outlined">
+            <mat-card-content class="empty-block">
+              <p class="empty-title">No matching employees</p>
+              <button matButton="outlined" type="button" (click)="onResetFilters()">
+                Reset filters
+              </button>
+            </mat-card-content>
+          </mat-card>
         }
       }
 
-      <div class="surface-card mobile-footer">
-        <div class="mobile-footer-top">
-          <span class="summary-text"
-            >Showing {{ rangeStart() }}–{{ rangeEnd() }} of {{ total() }}</span
-          >
-          <select
-            aria-label="Rows per page"
-            class="field-select page-size-select"
-            [value]="state().pageSize"
-            (change)="onPageSizeChange($event)"
-          >
-            @for (size of pageSizeOptions; track size) {
-              <option [value]="size" [selected]="size === state().pageSize">
-                {{ size }} / page
-              </option>
-            }
-          </select>
-        </div>
-
-        <div class="mobile-pager">
-          <button
-            type="button"
-            class="btn btn-outline"
-            [disabled]="state().page <= 1"
-            (click)="goToPage(state().page - 1)"
-          >
-            ‹ Prev
-          </button>
-          <span class="mobile-page-label">Page {{ state().page }} of {{ totalPages() }}</span>
-          <button
-            type="button"
-            class="btn btn-outline"
-            [disabled]="state().page >= totalPages()"
-            (click)="goToPage(state().page + 1)"
-          >
-            Next ›
-          </button>
-        </div>
-      </div>
+      <mat-card appearance="outlined">
+        <mat-paginator
+          [length]="total()"
+          [pageIndex]="state().page - 1"
+          [pageSize]="state().pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          aria-label="Employee pagination"
+          (page)="onPageChange($event)"
+        />
+      </mat-card>
     </section>
   }
 </div>
