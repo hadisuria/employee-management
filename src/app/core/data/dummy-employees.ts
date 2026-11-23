@@ -15,70 +15,60 @@ const FEATURED_SEEDS: readonly NameSeed[] = [
     lastName: 'Santoso',
     group: 'Information Technology',
     status: 'Active',
-    basicSalary: 15_750_000.5,
   },
   {
     firstName: 'Siti',
     lastName: 'Rahmawati',
     group: 'Finance',
     status: 'Active',
-    basicSalary: 14_200_000,
   },
   {
     firstName: 'Andi',
     lastName: 'Wijaya',
     group: 'Operations',
     status: 'On Leave',
-    basicSalary: 18_500_000,
   },
   {
     firstName: 'Dewi',
     lastName: 'Lestari',
     group: 'Human Resource',
     status: 'Active',
-    basicSalary: 12_500_000,
   },
   {
     firstName: 'Rizky',
     lastName: 'Pratama',
     group: 'Risk & Compliance',
     status: 'Probation',
-    basicSalary: 16_900_000,
   },
   {
     firstName: 'Nadia',
     lastName: 'Putri',
     group: 'Marketing',
     status: 'Inactive',
-    basicSalary: 11_800_000,
   },
   {
     firstName: 'Hendra',
     lastName: 'Kusuma',
     group: 'Sales',
     status: 'Active',
-    basicSalary: 13_400_000,
   },
   {
     firstName: 'Ayu',
     lastName: 'Wulandari',
     group: 'Legal',
     status: 'Active',
-    basicSalary: 15_100_000.25,
   },
   {
     firstName: 'Fajar',
     lastName: 'Nugroho',
     group: 'Customer Service',
     status: 'Active',
-    basicSalary: 10_650_000.75,
   },
   {
     firstName: 'Tari',
     lastName: 'Permata',
     group: 'Administration',
     status: 'Probation',
-    basicSalary: 11_250_000.5,
   },
 ];
 
@@ -122,23 +112,29 @@ const STATUSES: readonly EmployeeStatus[] = [
   'Probation',
   'Inactive',
 ];
-const SALARY_DECIMALS: readonly number[] = [0, 0.5, 0, 0.25, 0.75, 0];
+
+const RANDOM_NOTES: readonly string[] = [
+  'Remote work approved',
+  'Relocated from Surabaya branch',
+  'Lead mentor for onboarding',
+  'Cross-team rotation',
+  'Contract renewal scheduled',
+  'Hybrid schedule (Tue-Thu)',
+  'Pending certification review',
+  'Acting team lead',
+  'Annual performance bonus eligible',
+  'Part-time advisory role',
+];
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-function buildIsoTimestamp(
-  year: number,
-  month: number,
-  day: number,
-  hour: number,
-  minute: number,
-): string {
-  return `${year}-${pad2(month)}-${pad2(day)}T${pad2(hour)}:${pad2(minute)}:00.000Z`;
+function buildDateOnly(year: number, month: number, day: number): string {
+  return `${year}-${pad2(month)}-${pad2(day)}`;
 }
 
-export function generateDummyEmployees(count = 120): Employee[] {
+export function generateDummyEmployees(count = 100): Employee[] {
   const usedUsernames = new Set<string>();
   const employees: Employee[] = [];
 
@@ -160,30 +156,28 @@ export function generateDummyEmployees(count = 120): Employee[] {
     const birthYear = 1980 + (i % 22);
     const birthMonth = (i % 12) + 1;
     const birthDay = (i % 28) + 1;
-    const birthHour = 7 + (i % 11);
-    const birthMinute = (i * 15) % 60;
+    const birthDate = buildDateOnly(birthYear, birthMonth, birthDay);
 
-    const joinedYear = 2021 + (i % 5);
-    const joinedMonth = ((i + 3) % 12) + 1;
-    const joinedDay = ((i * 3) % 28) + 1;
-
-    const computedSalary =
-      8_500_000 + (i % 20) * 950_000 + SALARY_DECIMALS[i % SALARY_DECIMALS.length];
+    const computedSalary = Math.round((6_000_000 + Math.random() * 20_000_000) * 100) / 100;
+    const description =
+      Math.random() < 0.72
+        ? 'N/A'
+        : RANDOM_NOTES[Math.floor(Math.random() * RANDOM_NOTES.length)];
 
     employees.push({
       username,
       firstName,
       lastName,
       email: `${username}@company.co.id`,
-      birthDate: buildIsoTimestamp(birthYear, birthMonth, birthDay, birthHour, birthMinute),
+      birthDate,
       basicSalary: seed?.basicSalary ?? computedSalary,
       status: seed?.status ?? STATUSES[i % STATUSES.length],
       group: seed?.group ?? DUMMY_GROUPS[i % DUMMY_GROUPS.length],
-      description: buildIsoTimestamp(joinedYear, joinedMonth, joinedDay, 9, (i * 10) % 60),
+      description,
     });
   }
 
   return employees;
 }
 
-export const DUMMY_EMPLOYEES: readonly Employee[] = generateDummyEmployees(120);
+export const DUMMY_EMPLOYEES: readonly Employee[] = generateDummyEmployees(100);

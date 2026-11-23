@@ -82,7 +82,7 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     const username = (body?.username ?? '').trim();
     const password = body?.password ?? '';
 
-    if (username === 'admin' && password === 'admin123') {
+    if (username === 'admin' && password === '123') {
       return respondOk({ token: 'mock-jwt-token', username }, 200, delayMs);
     }
 
@@ -201,5 +201,6 @@ function normalizeEmployeePayload(payload: Employee): Employee {
     firstName: payload.firstName.trim(),
     lastName: payload.lastName.trim(),
     email: payload.email.trim(),
+    description: (payload.description ?? '').trim(),
   };
 }

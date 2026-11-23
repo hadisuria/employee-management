@@ -14,8 +14,10 @@ const DEFAULT_LIST_STATE: EmployeeListState = {
 @Injectable({ providedIn: 'root' })
 export class EmployeeListStateService {
   private readonly stateSignal = signal<EmployeeListState>({ ...DEFAULT_LIST_STATE });
+  private readonly showSalarySignal = signal(true);
 
   readonly state = this.stateSignal.asReadonly();
+  readonly showSalary = this.showSalarySignal.asReadonly();
 
   updateFilters(
     partial: Partial<Pick<EmployeeListState, 'searchName' | 'searchEmail' | 'searchGroup'>>,
@@ -29,13 +31,28 @@ export class EmployeeListStateService {
 
   toggleSort(field: EmployeeSortField): void {
     this.stateSignal.update((current) => {
-      const nextDirection =
-        current.sortField === field && current.sortDirection === 'asc' ? 'desc' : 'asc';
+      if (current.sortField !== field) {
+        return {
+          ...current,
+          sortField: field,
+          sortDirection: 'asc',
+          page: 1,
+        };
+      }
+
+      if (current.sortDirection === 'asc') {
+        return {
+          ...current,
+          sortField: field,
+          sortDirection: 'desc',
+          page: 1,
+        };
+      }
 
       return {
         ...current,
-        sortField: field,
-        sortDirection: nextDirection,
+        sortField: '',
+        sortDirection: 'asc',
         page: 1,
       };
     });
@@ -65,6 +82,10 @@ export class EmployeeListStateService {
     }));
   }
 
+  toggleSalaryVisibility(): void {
+    this.showSalarySignal.update((visible) => !visible);
+  }
+
   resetFilters(): void {
     this.stateSignal.update((current) => ({
       ...current,
@@ -77,5 +98,6 @@ export class EmployeeListStateService {
 
   resetAll(): void {
     this.stateSignal.set({ ...DEFAULT_LIST_STATE });
+    this.showSalarySignal.set(true);
   }
 }
