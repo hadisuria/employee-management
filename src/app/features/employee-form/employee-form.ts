@@ -18,10 +18,13 @@ import { Employee, EmployeeStatus } from '../../core/models/employee.model';
 import { NotificationService } from '../../core/state/notification.service';
 import { SearchableSelectComponent } from '../../shared/components/searchable-select/searchable-select';
 import {
-  getMaxBirthDate,
-  MIN_EMPLOYEE_AGE,
+  formatSalaryDisplay,
+  parseSalaryInput,
+  SalaryFormatDirective,
+  salaryValidator,
+} from '../../shared/directives/salary-format.directive';
+import {
   maxTodayValidator,
-  minAgeValidator,
   trimmedRequiredValidator,
 } from '../../shared/validators/date.validators';
 
@@ -59,6 +62,7 @@ function formatDateOnly(date: Date): string {
     MatDividerModule,
     MatProgressBarModule,
     SearchableSelectComponent,
+    SalaryFormatDirective,
   ],
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.scss',
@@ -82,8 +86,7 @@ export class EmployeeFormComponent {
     'Probation',
   ];
 
-  readonly minAge = MIN_EMPLOYEE_AGE;
-  readonly maxBirthDate = getMaxBirthDate(MIN_EMPLOYEE_AGE);
+  readonly todayDate = new Date();
   readonly isEditMode = signal(false);
   readonly requestedUsername = signal('');
   readonly originalUsername = signal('');
@@ -96,16 +99,8 @@ export class EmployeeFormComponent {
     firstName: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
     lastName: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
     email: this.fb.nonNullable.control('', [trimmedRequiredValidator(), Validators.email]),
-    birthDate: this.fb.control<Date | null>(null, [
-      Validators.required,
-      maxTodayValidator(),
-      minAgeValidator(MIN_EMPLOYEE_AGE),
-    ]),
-    basicSalary: this.fb.nonNullable.control('', [
-      Validators.required,
-      Validators.pattern(/^\d+(\.\d{1,2})?$/),
-      Validators.min(0),
-    ]),
+    birthDate: this.fb.control<Date | null>(null, [Validators.required, maxTodayValidator()]),
+    basicSalary: this.fb.nonNullable.control('', [Validators.required, salaryValidator()]),
     status: this.fb.nonNullable.control('', [Validators.required]),
     group: this.fb.nonNullable.control('', [Validators.required]),
     description: this.fb.nonNullable.control(''),
@@ -149,7 +144,7 @@ export class EmployeeFormComponent {
           lastName: result.lastName,
           email: result.email,
           birthDate: parseDateOnly(result.birthDate),
-          basicSalary: String(result.basicSalary),
+          basicSalary: formatSalaryDisplay(result.basicSalary),
           status: result.status,
           group: result.group,
           description: result.description ?? '',
@@ -171,13 +166,19 @@ export class EmployeeFormComponent {
       return;
     }
 
+    const basicSalary = parseSalaryInput(raw.basicSalary);
+    if (basicSalary === null) {
+      this.form.controls.basicSalary.markAsTouched();
+      return;
+    }
+
     const payload: Employee = {
       username: raw.username.trim(),
       firstName: raw.firstName.trim(),
       lastName: raw.lastName.trim(),
       email: raw.email.trim(),
       birthDate: formatDateOnly(raw.birthDate),
-      basicSalary: Number(raw.basicSalary),
+      basicSalary,
       status: raw.status as EmployeeStatus,
       group: raw.group,
       description: raw.description.trim(),

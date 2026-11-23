@@ -32,14 +32,6 @@ function parseCalendarDate(value: unknown): Date | null {
   return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
 }
 
-export const MIN_EMPLOYEE_AGE = 18;
-
-/** Returns the latest calendar birth date that satisfies the minimum age today. */
-export function getMaxBirthDate(minAge = MIN_EMPLOYEE_AGE): Date {
-  const now = new Date();
-  return new Date(now.getFullYear() - minAge, now.getMonth(), now.getDate());
-}
-
 export function maxTodayValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
@@ -55,26 +47,6 @@ export function maxTodayValidator(): ValidatorFn {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     return selected.getTime() > todayStart ? { maxToday: true } : null;
-  };
-}
-
-/** Validates that a birth date falls on or before the minimum-age cutoff date. */
-export function minAgeValidator(minAge = MIN_EMPLOYEE_AGE): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) {
-      return null;
-    }
-
-    const selected = parseCalendarDate(value);
-    if (!selected) {
-      return null;
-    }
-
-    const maxBirthDate = getMaxBirthDate(minAge);
-    return selected.getTime() > maxBirthDate.getTime()
-      ? { minAge: { requiredAge: minAge } }
-      : null;
   };
 }
 

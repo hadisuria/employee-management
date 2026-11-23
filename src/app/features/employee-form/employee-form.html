@@ -108,23 +108,21 @@
               <input
                 matInput
                 [matDatepicker]="dobPicker"
-                [max]="maxBirthDate"
+                [max]="todayDate"
                 formControlName="birthDate"
                 placeholder="MM/DD/YYYY"
                 required
               />
               <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
               <mat-datepicker #dobPicker />
-              <mat-hint>Minimum age {{ minAge }} years</mat-hint>
+              <mat-hint>Date cannot exceed today</mat-hint>
               @if (form.controls.birthDate.touched && form.controls.birthDate.errors) {
                 <mat-error>
-                  @if (form.controls.birthDate.errors['maxToday']) {
-                    Date of Birth cannot exceed today
-                  } @else if (
-                    form.controls.birthDate.errors['minAge'] ||
-                    form.controls.birthDate.errors['matDatepickerMax']
+                  @if (
+                    form.controls.birthDate.errors['matDatepickerMax'] ||
+                    form.controls.birthDate.errors['maxToday']
                   ) {
-                    Employee must be at least {{ minAge }} years old
+                    Date of Birth cannot exceed today
                   } @else if (form.controls.birthDate.errors['matDatepickerParse']) {
                     Enter a valid date
                   } @else {
@@ -141,11 +139,12 @@
                 matInput
                 type="text"
                 inputmode="decimal"
+                appSalaryFormat
                 formControlName="basicSalary"
-                placeholder="0.00"
+                placeholder="0,00"
                 required
               />
-              <mat-hint>Numbers only, up to 2 decimals</mat-hint>
+              <mat-hint>Numbers only, up to 2 decimals using ',' (e.g. 10.000.000,50)</mat-hint>
               @if (form.controls.basicSalary.touched && form.controls.basicSalary.errors) {
                 <mat-error>
                   @if (form.controls.basicSalary.errors['required']) {
