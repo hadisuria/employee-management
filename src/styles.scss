@@ -150,22 +150,40 @@ body {
   );
 }
 
-.action-edit {
-  --mat-button-outlined-outline-color: var(--mat-sys-tertiary-fixed-dim);
-  --mat-button-outlined-label-text-color: var(--mat-sys-on-tertiary-container);
-  --mat-button-tonal-container-color: var(--mat-sys-tertiary-container);
-  --mat-button-tonal-label-text-color: var(--mat-sys-on-tertiary-container);
-  background-color: var(--mat-sys-tertiary-container);
-  border-color: var(--mat-sys-tertiary-fixed-dim);
-  color: var(--mat-sys-on-tertiary-container);
+.action-edit,
+.mat-mdc-outlined-button.action-edit:not(:disabled) {
+  --mat-button-outlined-outline-color: light-dark(#f59e0b, #d9a200);
+  --mat-button-outlined-label-text-color: light-dark(#92400e, #ffdf9f);
+  --mat-button-outlined-state-layer-color: light-dark(#92400e, #fabd15);
+  --mat-button-outlined-ripple-color: light-dark(
+    rgba(146, 64, 14, 0.12),
+    rgba(250, 189, 21, 0.16)
+  );
+  background-color: light-dark(#fef3c7, #4a3500);
+  border-color: light-dark(#f59e0b, #d9a200);
+  color: light-dark(#92400e, #ffdf9f);
 }
 
-.action-delete {
-  --mat-button-outlined-outline-color: light-dark(#fca5a5, #ba1a1a);
-  --mat-button-outlined-label-text-color: var(--mat-sys-on-error-container);
-  background-color: var(--mat-sys-error-container);
-  border-color: light-dark(#fca5a5, #ba1a1a);
-  color: var(--mat-sys-on-error-container);
+.icon-action.action-edit:hover {
+  background-color: light-dark(#fde68a, #5c4300);
+}
+
+.action-delete,
+.mat-mdc-outlined-button.action-delete:not(:disabled) {
+  --mat-button-outlined-outline-color: light-dark(#ef4444, #de3730);
+  --mat-button-outlined-label-text-color: light-dark(#991b1b, #ffdad6);
+  --mat-button-outlined-state-layer-color: light-dark(#991b1b, #ffb4ab);
+  --mat-button-outlined-ripple-color: light-dark(
+    rgba(153, 27, 27, 0.12),
+    rgba(255, 180, 171, 0.16)
+  );
+  background-color: light-dark(#fee2e2, #5c1015);
+  border-color: light-dark(#ef4444, #de3730);
+  color: light-dark(#991b1b, #ffdad6);
+}
+
+.icon-action.action-delete:hover {
+  background-color: light-dark(#fecaca, #78171d);
 }
 
 @media (max-width: 599.98px) {
