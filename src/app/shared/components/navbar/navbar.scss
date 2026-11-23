@@ -1,176 +1,108 @@
-.navbar {
+:host {
   position: sticky;
   top: 0;
   z-index: 800;
-  background-color: var(--bg-surface);
-  border-bottom: 1px solid var(--border-subtle);
+  display: block;
 }
 
-.navbar-inner {
+.app-toolbar {
+  height: auto;
+  min-height: 64px;
+  padding: 0;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.toolbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  max-width: var(--container-max);
-  height: 64px;
+  width: 100%;
+  max-width: 1280px;
+  min-height: 64px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 24px;
 }
 
-.navbar-left {
+.toolbar-left {
   display: flex;
   align-items: center;
-  gap: 28px;
-  height: 100%;
+  gap: 20px;
+  min-width: 0;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--text-primary);
-  font-size: 16px;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-title-medium);
   font-weight: 600;
   text-decoration: none;
-
-  &:hover {
-    text-decoration: none;
-  }
+  white-space: nowrap;
 }
 
-.brand-badge {
+.brand-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: 9px;
-  background-color: var(--primary);
-  color: #ffffff;
-}
+  border-radius: 8px;
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
 
-.nav-links {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.nav-link {
-  display: inline-flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 4px;
-  border-bottom: 2px solid transparent;
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-
-  &:hover {
-    color: var(--text-primary);
-    text-decoration: none;
-  }
-
-  &.is-active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
 }
 
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.nav-btn.is-active {
+  color: var(--mat-sys-primary);
+  background-color: var(--mat-sys-primary-container);
 }
 
-.user-chip {
-  display: inline-flex;
+.toolbar-right {
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px 4px 5px;
-  border-radius: var(--radius-pill);
-  border: 1px solid #c7d2fe;
-  background-color: var(--bg-tint);
-  color: var(--primary-hover);
-  font-size: 13px;
-  font-weight: 500;
 }
 
-.user-avatar {
+.user-label {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-pill);
-  background-color: var(--primary);
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.logout-btn {
-  height: 36px;
-  padding: 0 12px;
-}
-
-.menu-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-control);
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.mobile-drawer {
-  padding: 12px 16px 16px;
-  border-top: 1px solid var(--border-subtle);
-  background-color: var(--bg-surface);
-  box-shadow: var(--shadow-card);
-}
-
-.mobile-nav-link {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: var(--radius-control);
-  font-size: 14px;
+  gap: 6px;
+  padding: 0 8px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
   font-weight: 500;
-  color: var(--text-secondary);
 
-  &.is-active {
-    background-color: var(--bg-tint);
-    color: var(--primary);
-  }
-
-  &:hover {
-    text-decoration: none;
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }
 
-.mobile-drawer-footer {
+.menu-user {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-@media (max-width: 959.98px) {
-  .navbar-inner {
-    padding: 0 24px;
-  }
+  gap: 10px;
+  padding: 10px 16px;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 @media (max-width: 599.98px) {
-  .navbar-inner {
+  .toolbar-inner {
     padding: 0 16px;
+  }
+
+  .brand-name {
+    font-size: 15px;
   }
 }

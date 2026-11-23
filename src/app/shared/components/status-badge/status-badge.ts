@@ -5,54 +5,46 @@ import { EmployeeStatus } from '../../../core/models/employee.model';
   selector: 'app-status-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span class="badge" [class]="'badge-' + variant()">
-      <span class="dot" aria-hidden="true"></span>
-      {{ status() }}
-    </span>
+    <span class="status-pill" [attr.data-variant]="variant()">{{ label() }}</span>
   `,
   styles: `
-    .badge {
+    .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
       padding: 4px 10px;
-      border-radius: 9999px;
-      border: 1px solid transparent;
+      border-radius: 6px;
       font-size: 12px;
       line-height: 16px;
       font-weight: 500;
       white-space: nowrap;
+      flex-shrink: 0;
     }
-    .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 9999px;
-      background-color: currentColor;
+
+    .status-pill[data-variant='active'] {
+      background-color: light-dark(#dcfce7, #14532d);
+      color: light-dark(#166534, #bbf7d0);
     }
-    .badge-active {
-      background-color: #dcfce7;
-      border-color: #86efac;
-      color: #166534;
+
+    .status-pill[data-variant='leave'] {
+      background-color: light-dark(#fef3c7, #78350f);
+      color: light-dark(#92400e, #fde68a);
     }
-    .badge-leave {
-      background-color: #fef3c7;
-      border-color: #fcd34d;
-      color: #92400e;
+
+    .status-pill[data-variant='probation'] {
+      background-color: light-dark(#dbeafe, #1e3a8a);
+      color: light-dark(#1e40af, #bfdbfe);
     }
-    .badge-probation {
-      background-color: #dbeafe;
-      border-color: #93c5fd;
-      color: #1e40af;
-    }
-    .badge-inactive {
-      background-color: #f1f5f9;
-      border-color: #cbd5e1;
-      color: #475569;
+
+    .status-pill[data-variant='inactive'] {
+      background-color: var(--mat-sys-surface-container-high);
+      color: var(--mat-sys-on-surface-variant);
     }
   `,
 })
 export class StatusBadgeComponent {
   readonly status = input.required<EmployeeStatus | string>();
+
+  readonly label = computed(() => this.status() || 'Unknown');
 
   readonly variant = computed(() => {
     switch (this.status()) {

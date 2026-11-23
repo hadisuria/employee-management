@@ -1,124 +1,45 @@
-<div class="select-wrapper">
-  <button
-    type="button"
-    class="select-trigger"
-    [id]="inputId()"
-    [class.is-open]="isOpen()"
-    [class.is-invalid]="invalid()"
-    [class.is-placeholder]="!selectedValue()"
+<mat-form-field class="full-width" [subscriptSizing]="subscriptSizing()">
+  <mat-label>{{ label() }}</mat-label>
+  <mat-select
+    panelClass="searchable-select-panel"
+    [value]="selectedValue()"
+    [required]="required()"
     [disabled]="isDisabled()"
-    aria-haspopup="listbox"
-    [attr.aria-expanded]="isOpen()"
-    (click)="toggleOpen()"
+    [placeholder]="placeholder()"
+    [errorStateMatcher]="errorStateMatcher"
+    (selectionChange)="onSelectChange($event.value)"
+    (openedChange)="onOpenedChange($event)"
   >
-    <span class="trigger-text">{{ displayLabel() }}</span>
-    <svg
-      class="chevron"
-      [class.rotated]="isOpen()"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  </button>
+    <mat-select-trigger>
+      {{ selectedValue() || (allowClear() ? clearLabel() : placeholder()) }}
+    </mat-select-trigger>
 
-  @if (isOpen()) {
-    <div class="dropdown-panel" role="listbox">
-      <div class="search-header">
-        <svg
-          class="search-icon"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          #searchInput
-          type="text"
-          class="search-box"
-          [value]="searchTerm()"
-          [placeholder]="searchPlaceholder()"
-          aria-label="Filter options"
-          (input)="onSearchInput($event)"
-        />
-      </div>
-
-      <div class="options-list">
-        @if (allowClear() && !searchTerm().trim()) {
-          <button
-            type="button"
-            class="option-item"
-            role="option"
-            [attr.aria-selected]="selectedValue() === ''"
-            [class.is-selected]="selectedValue() === ''"
-            (click)="selectOption('')"
-          >
-            <span>{{ clearLabel() }}</span>
-            @if (selectedValue() === '') {
-              <svg
-                class="check-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            }
-          </button>
-        }
-
-        @for (option of filteredOptions(); track option) {
-          <button
-            type="button"
-            class="option-item"
-            role="option"
-            [attr.aria-selected]="selectedValue() === option"
-            [class.is-selected]="selectedValue() === option"
-            (click)="selectOption(option)"
-          >
-            <span>{{ option }}</span>
-            @if (selectedValue() === option) {
-              <svg
-                class="check-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            }
-          </button>
-        } @empty {
-          <div class="empty-state">{{ emptyText() }}</div>
-        }
-      </div>
+    <div class="select-search-box" (click)="$event.stopPropagation()">
+      <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+      <input
+        #searchInput
+        type="text"
+        class="search-input"
+        [value]="searchTerm()"
+        [placeholder]="searchPlaceholder()"
+        aria-label="Filter options"
+        (input)="onSearchInput($event)"
+        (keydown)="onSearchKeydown($event)"
+      />
     </div>
+
+    @if (allowClear() && !searchTerm().trim()) {
+      <mat-option value="">{{ clearLabel() }}</mat-option>
+    }
+
+    @for (option of filteredOptions(); track option) {
+      <mat-option [value]="option">{{ option }}</mat-option>
+    } @empty {
+      <div class="empty-option">{{ emptyText() }}</div>
+    }
+  </mat-select>
+
+  @if (errorMessage()) {
+    <mat-error>{{ errorMessage() }}</mat-error>
   }
-</div>
+</mat-form-field>

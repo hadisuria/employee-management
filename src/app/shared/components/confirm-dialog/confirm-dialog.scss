@@ -1,68 +1,33 @@
-.dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background-color: rgba(15, 23, 42, 0.45);
-}
-
-.dialog-panel {
-  width: 100%;
-  max-width: 440px;
-  padding: 24px;
-  box-shadow: var(--shadow-popover);
-}
-
 .dialog-header {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 0;
+
+  h2[mat-dialog-title] {
+    margin: 0;
+    padding: 0;
+  }
 }
 
-.danger-icon {
+.danger-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
-  background-color: var(--danger-bg);
-  color: var(--danger-text);
-}
-
-.dialog-title {
-  margin: 0;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-  color: var(--text-primary);
+  background-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
 }
 
 .dialog-message {
-  margin: 6px 0 0;
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--text-secondary);
+  margin: 8px 0 0;
+  color: var(--mat-sys-on-surface-variant);
 }
 
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 24px;
-}
-
-@media (max-width: 599.98px) {
-  .dialog-panel {
-    padding: 20px 16px;
-  }
-
-  .dialog-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
+.danger-confirm-btn {
+  --mat-button-filled-container-color: var(--mat-sys-error);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-error);
 }
