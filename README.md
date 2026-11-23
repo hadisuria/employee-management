@@ -7,15 +7,15 @@ HR backoffice Single Page Application built with Angular 21, Angular Material M3
 - **Theme & Dark Mode:** Material 3 theming (`styles.scss` + `styles_theme-colors.scss`) with `light` / `dark` color-scheme toggle animating radially from the clicked toggle button via the View Transitions API (`ThemeService`) and persisted in `localStorage`.
 - **Authentication (`/login`):** Vertically centered login card with Reactive Form validation, password visibility toggle, inline error states, loading spinner, `sessionStorage`-backed session state, and route guards (`authGuard` / `guestGuard`).
 - **Employee List (`/employees`):**
-  - 100 dummy employees seeded across 10 groups (`src/app/core/data/`) with date-only `birthDate` (`YYYY-MM-DD`) and string `description` (`N/A` or short HR notes).
+  - 100 dummy employees seeded across 10 groups (`src/app/core/data/`) with date-only `birthDate` (`YYYY-MM-DD`) and string `description` (`''` or short HR notes).
   - Multi-parameter **AND** search (`Name or username`, `Email`, searchable `Group` dropdown) plus `Reset`.
   - **Hide / Show salary** toggle masking/revealing basic salaries (`Rp. ••••••••` ↔ `Rp. xx.xxx,xx`), preserved across detail navigation.
   - 3-state Material sorting (`asc` → `desc` → default order) across `Username`, `Name`, `Email`, `Group`, `Basic Salary`, and `Status`.
   - `MatPaginator` with page size selector (`10`, `25`, `50`, `100`).
   - Row **Edit** (`/employees/:username/edit`) and **Delete** (Material `MatDialog` confirmation, red danger toast, and live list refresh).
   - Responsive layout powered by `@angular/cdk/layout` (`Breakpoints.XSmall` renders mobile cards and a Material navigation menu).
-- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Material Reactive Form (`EmployeeFormComponent`) with 9 mandatory fields, **Date of Birth** Material Datepicker (`birthDate <= today`), decimal salary validation, searchable `Group` selector, string **Description**, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
-- **Employee Detail (`/employees/:username`):** Structured detail card showing formatted `Date of Birth` (date-only `dd MMM yyyy`), plain string `Description`, `Basic salary` (`Rp. xx.xxx,xx` via `RupiahPipe`), `Status` badge, **Edit** / **Delete** actions, unknown-user fallback, and **Back** navigation preserving previous list filters, sort, page, and salary visibility state.
+- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Material Reactive Form (`EmployeeFormComponent`) with 8 required fields + optional string **Description**, **Date of Birth** Material Datepicker (`birthDate <= today`), decimal salary validation, searchable `Group` selector, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
+- **Employee Detail (`/employees/:username`):** Structured detail card showing formatted `Date of Birth` (date-only `dd MMM yyyy`), plain string `Description` (`N/A` when empty), `Basic salary` (`Rp. xx.xxx,xx` via `RupiahPipe`), `Status` badge, **Edit** / **Delete** actions, unknown-user fallback, and **Back** navigation preserving previous list filters, sort, page, and salary visibility state.
 
 ## Environment
 

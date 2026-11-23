@@ -100,7 +100,7 @@ export class EmployeeFormComponent {
     ]),
     status: this.fb.nonNullable.control('', [Validators.required]),
     group: this.fb.nonNullable.control('', [Validators.required]),
-    description: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
+    description: this.fb.nonNullable.control(''),
   });
 
   constructor() {
@@ -144,7 +144,7 @@ export class EmployeeFormComponent {
           basicSalary: String(result.basicSalary),
           status: result.status,
           group: result.group,
-          description: result.description || 'N/A',
+          description: result.description ?? '',
         });
       });
   }

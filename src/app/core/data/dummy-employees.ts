@@ -178,7 +178,7 @@ export function generateDummyEmployees(count = 100): Employee[] {
 
     const computedSalary = Math.round((6_000_000 + Math.random() * 20_000_000) * 100) / 100;
     const description =
-      Math.random() < 0.72 ? 'N/A' : RANDOM_NOTES[Math.floor(Math.random() * RANDOM_NOTES.length)];
+      Math.random() < 0.72 ? '' : RANDOM_NOTES[Math.floor(Math.random() * RANDOM_NOTES.length)];
 
     employees.push({
       username,

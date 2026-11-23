@@ -108,7 +108,7 @@
 
           <div class="detail-item full-span">
             <dt class="detail-label">Description</dt>
-            <dd class="detail-value">{{ emp.description || 'N/A' }}</dd>
+            <dd class="detail-value">{{ emp.description.trim() || 'N/A' }}</dd>
           </div>
         </dl>
       </mat-card-content>
