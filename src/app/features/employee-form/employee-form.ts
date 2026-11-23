@@ -18,7 +18,10 @@ import { Employee, EmployeeStatus } from '../../core/models/employee.model';
 import { NotificationService } from '../../core/state/notification.service';
 import { SearchableSelectComponent } from '../../shared/components/searchable-select/searchable-select';
 import {
+  getMaxBirthDate,
+  MIN_EMPLOYEE_AGE,
   maxTodayValidator,
+  minAgeValidator,
   trimmedRequiredValidator,
 } from '../../shared/validators/date.validators';
 
@@ -79,7 +82,8 @@ export class EmployeeFormComponent {
     'Probation',
   ];
 
-  readonly todayDate = new Date();
+  readonly minAge = MIN_EMPLOYEE_AGE;
+  readonly maxBirthDate = getMaxBirthDate(MIN_EMPLOYEE_AGE);
   readonly isEditMode = signal(false);
   readonly requestedUsername = signal('');
   readonly originalUsername = signal('');
@@ -92,7 +96,11 @@ export class EmployeeFormComponent {
     firstName: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
     lastName: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
     email: this.fb.nonNullable.control('', [trimmedRequiredValidator(), Validators.email]),
-    birthDate: this.fb.control<Date | null>(null, [Validators.required, maxTodayValidator()]),
+    birthDate: this.fb.control<Date | null>(null, [
+      Validators.required,
+      maxTodayValidator(),
+      minAgeValidator(MIN_EMPLOYEE_AGE),
+    ]),
     basicSalary: this.fb.nonNullable.control('', [
       Validators.required,
       Validators.pattern(/^\d+(\.\d{1,2})?$/),

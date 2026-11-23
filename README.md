@@ -14,7 +14,7 @@ HR backoffice Single Page Application built with Angular 21, Angular Material M3
   - `MatPaginator` with page size selector (`10`, `25`, `50`, `100`).
   - Row **Edit** (`/employees/:username/edit`) and **Delete** (Material `MatDialog` confirmation, red danger toast, and live list refresh).
   - Responsive layout powered by `@angular/cdk/layout` (`Breakpoints.XSmall` renders mobile cards and a Material navigation menu).
-- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Material Reactive Form (`EmployeeFormComponent`) with 8 required fields + optional string **Description**, **Date of Birth** Material Datepicker (`birthDate <= today`), decimal salary validation, searchable `Group` selector, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
+- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Material Reactive Form (`EmployeeFormComponent`) with 8 required fields + optional string **Description**, **Date of Birth** Material Datepicker (`birthDate <= today` and minimum age 18 validation), decimal salary validation, searchable `Group` selector, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
 - **Employee Detail (`/employees/:username`):** Structured detail card showing formatted `Date of Birth` (date-only `dd MMM yyyy`), plain string `Description` (`N/A` when empty), `Basic salary` (`Rp. xx.xxx,xx` via `RupiahPipe`), `Status` badge, **Edit** / **Delete** actions, unknown-user fallback, and **Back** navigation preserving previous list filters, sort, page, and salary visibility state.
 
 ## Environment

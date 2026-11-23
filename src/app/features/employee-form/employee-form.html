@@ -108,21 +108,23 @@
               <input
                 matInput
                 [matDatepicker]="dobPicker"
-                [max]="todayDate"
+                [max]="maxBirthDate"
                 formControlName="birthDate"
                 placeholder="MM/DD/YYYY"
                 required
               />
               <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
               <mat-datepicker #dobPicker />
-              <mat-hint>Date cannot exceed today</mat-hint>
+              <mat-hint>Minimum age {{ minAge }} years</mat-hint>
               @if (form.controls.birthDate.touched && form.controls.birthDate.errors) {
                 <mat-error>
-                  @if (
-                    form.controls.birthDate.errors['matDatepickerMax'] ||
-                    form.controls.birthDate.errors['maxToday']
-                  ) {
+                  @if (form.controls.birthDate.errors['maxToday']) {
                     Date of Birth cannot exceed today
+                  } @else if (
+                    form.controls.birthDate.errors['minAge'] ||
+                    form.controls.birthDate.errors['matDatepickerMax']
+                  ) {
+                    Employee must be at least {{ minAge }} years old
                   } @else if (form.controls.birthDate.errors['matDatepickerParse']) {
                     Enter a valid date
                   } @else {
