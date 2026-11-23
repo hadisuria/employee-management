@@ -1,105 +1,94 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+
+  a {
+    color: var(--mat-sys-on-surface-variant);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--mat-sys-primary);
+    }
+  }
+}
+
+.page-title {
+  margin: 0 0 20px;
+  font: var(--mat-sys-headline-medium);
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+.state-card,
+.form-card {
+  background-color: var(--mat-sys-surface);
+}
+
 .state-card {
+  overflow: hidden;
+}
+
+.state-content {
   padding: 48px 24px;
   text-align: center;
 }
 
-.form-card {
-  padding: 28px;
+.state-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.state-title {
+  margin: 0 0 6px;
+  font: var(--mat-sys-title-large);
+}
+
+.state-subtitle {
+  margin: 0 0 18px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.form-body {
+  padding: 24px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px 24px;
+  gap: 16px 20px;
 }
 
-.salary-input-group {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-control);
-  background-color: var(--bg-surface);
-  overflow: hidden;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-
-  &:focus-within {
-    border-color: var(--primary);
-    box-shadow: var(--focus-ring);
-  }
-
-  &.is-invalid {
-    border-color: var(--danger-border);
-  }
-}
-
-.salary-prefix {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 0 12px;
-  border-right: 1px solid var(--border-subtle);
-  background-color: var(--bg-subtle);
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.salary-input {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  padding: 0 12px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 14px;
-
-  &::placeholder {
-    color: var(--text-muted);
-  }
+.full-span {
+  grid-column: 1 / -1;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 28px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 16px 24px;
 }
 
 @media (max-width: 599.98px) {
-  .form-card {
-    padding: 20px 16px 84px;
+  .form-body {
+    padding: 20px 16px;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .salary-input-group {
-    min-height: 44px;
-    height: auto;
+    gap: 12px;
   }
 
   .form-actions {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 700;
-    margin-top: 0;
-    padding: 12px 16px;
-    background-color: var(--bg-surface);
-    box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.08);
     display: grid;
     grid-template-columns: 1fr 1fr;
+    padding: 16px;
   }
 }

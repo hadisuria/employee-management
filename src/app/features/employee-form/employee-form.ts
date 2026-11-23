@@ -1,6 +1,16 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { EmployeeApiService } from '../../core/api/employee-api.service';
@@ -12,18 +22,41 @@ import {
   trimmedRequiredValidator,
 } from '../../shared/validators/date.validators';
 
-function formatLocalDateTimeInput(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return (
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
-    `T${pad(date.getHours())}:${pad(date.getMinutes())}`
-  );
+function pad2(n: number): string {
+  return String(n).padStart(2, '0');
+}
+
+function parseDateOnly(raw: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec((raw ?? '').trim());
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatDateOnly(date: Date): string {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
 @Component({
   selector: 'app-employee-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, SearchableSelectComponent],
+  providers: [provideNativeDateAdapter()],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule,
+    MatProgressBarModule,
+    SearchableSelectComponent,
+  ],
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.scss',
 })
@@ -46,27 +79,28 @@ export class EmployeeFormComponent {
     'Probation',
   ];
 
+  readonly todayDate = new Date();
   readonly isEditMode = signal(false);
   readonly requestedUsername = signal('');
   readonly originalUsername = signal('');
   readonly loading = signal(false);
   readonly notFound = signal(false);
-  readonly maxDateTime = signal(formatLocalDateTimeInput(new Date()));
   readonly submitting = signal(false);
 
-  readonly form = this.fb.nonNullable.group({
-    username: ['', [trimmedRequiredValidator()]],
-    firstName: ['', [trimmedRequiredValidator()]],
-    lastName: ['', [trimmedRequiredValidator()]],
-    email: ['', [trimmedRequiredValidator(), Validators.email]],
-    birthDate: ['', [Validators.required, maxTodayValidator()]],
-    basicSalary: [
-      '',
-      [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), Validators.min(0)],
-    ],
-    status: ['', [Validators.required]],
-    group: ['', [Validators.required]],
-    description: ['', [Validators.required]],
+  readonly form = this.fb.group({
+    username: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
+    firstName: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
+    lastName: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
+    email: this.fb.nonNullable.control('', [trimmedRequiredValidator(), Validators.email]),
+    birthDate: this.fb.control<Date | null>(null, [Validators.required, maxTodayValidator()]),
+    basicSalary: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.pattern(/^\d+(\.\d{1,2})?$/),
+      Validators.min(0),
+    ]),
+    status: this.fb.nonNullable.control('', [Validators.required]),
+    group: this.fb.nonNullable.control('', [Validators.required]),
+    description: this.fb.nonNullable.control('', [trimmedRequiredValidator()]),
   });
 
   constructor() {
@@ -106,18 +140,16 @@ export class EmployeeFormComponent {
           firstName: result.firstName,
           lastName: result.lastName,
           email: result.email,
-          birthDate: formatLocalDateTimeInput(new Date(result.birthDate)),
+          birthDate: parseDateOnly(result.birthDate),
           basicSalary: String(result.basicSalary),
           status: result.status,
           group: result.group,
-          description: formatLocalDateTimeInput(new Date(result.description)),
+          description: result.description || 'N/A',
         });
       });
   }
 
   onSubmit(): void {
-    this.maxDateTime.set(formatLocalDateTimeInput(new Date()));
-
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -126,16 +158,21 @@ export class EmployeeFormComponent {
     if (this.submitting()) return;
 
     const raw = this.form.getRawValue();
+    if (!raw.birthDate) {
+      this.form.controls.birthDate.markAsTouched();
+      return;
+    }
+
     const payload: Employee = {
       username: raw.username.trim(),
       firstName: raw.firstName.trim(),
       lastName: raw.lastName.trim(),
       email: raw.email.trim(),
-      birthDate: new Date(raw.birthDate).toISOString(),
+      birthDate: formatDateOnly(raw.birthDate),
       basicSalary: Number(raw.basicSalary),
       status: raw.status as EmployeeStatus,
       group: raw.group,
-      description: new Date(raw.description).toISOString(),
+      description: raw.description.trim(),
     };
 
     this.submitting.set(true);
@@ -148,9 +185,9 @@ export class EmployeeFormComponent {
       next: (saved) => {
         this.submitting.set(false);
         if (this.isEditMode()) {
-          this.notification.show('warning', `Employee ${saved.username} updated successfully`);
+          this.notification.show('warning', `Employee ${saved.username} updated`);
         } else {
-          this.notification.show('success', `Employee ${saved.username} added successfully`);
+          this.notification.show('success', `Employee ${saved.username} added`);
         }
         void this.router.navigate(['/employees']);
       },

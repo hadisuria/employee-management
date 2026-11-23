@@ -1,4 +1,4 @@
-<div class="page-container">
+<div class="page-shell">
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/employees">Employees</a>
     <span aria-hidden="true">/</span>
@@ -6,161 +6,117 @@
   </nav>
 
   @if (loading()) {
-    <div class="surface-card state-card">
-      <p class="empty-title">Loading employee details...</p>
-      <p class="empty-subtitle">Fetching employee record.</p>
-    </div>
+    <mat-card appearance="outlined" class="state-card">
+      <mat-progress-bar mode="indeterminate" />
+      <mat-card-content class="state-content">
+        <p class="state-title">Loading employee record...</p>
+      </mat-card-content>
+    </mat-card>
   } @else if (notFound()) {
-    <div class="surface-card state-card">
-      <div class="not-found-icon" aria-hidden="true">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <line x1="17" y1="8" x2="22" y2="13" />
-          <line x1="22" y1="8" x2="17" y2="13" />
-        </svg>
-      </div>
-      <h1 class="empty-title">Employee not found</h1>
-      <p class="empty-subtitle">No employee record matches "{{ requestedUsername() }}".</p>
-      <a routerLink="/employees" class="btn btn-primary">Back to employees</a>
-    </div>
+    <mat-card appearance="outlined" class="state-card">
+      <mat-card-content class="state-content">
+        <mat-icon class="state-icon" aria-hidden="true">person_off</mat-icon>
+        <h1 class="state-title">Employee not found</h1>
+        <p class="state-subtitle">No record matches "{{ requestedUsername() }}".</p>
+        <a matButton="filled" routerLink="/employees">
+          <mat-icon>arrow_back</mat-icon>
+          Back to employees
+        </a>
+      </mat-card-content>
+    </mat-card>
   } @else if (employee(); as emp) {
-    <app-confirm-dialog
-      [open]="confirmOpen()"
-      title="Delete employee"
-      [message]="
-        'Delete ' +
-        emp.firstName +
-        ' ' +
-        emp.lastName +
-        ' (' +
-        emp.username +
-        ')? This removes the record from the current session.'
-      "
-      confirmLabel="Delete"
-      [busy]="deleting()"
-      busyLabel="Deleting..."
-      (cancel)="cancelDelete()"
-      (confirm)="confirmDelete()"
-    />
-
-    <div class="detail-header-row">
+    <header class="detail-header-row">
       <div class="detail-header">
         <div class="avatar-circle" aria-hidden="true">{{ initials() }}</div>
-        <div class="header-text">
+        <div>
           <div class="title-row">
             <h1 class="page-title">{{ emp.firstName }} {{ emp.lastName }}</h1>
             <app-status-badge [status]="emp.status" />
           </div>
-          <p class="page-subtitle">{{ emp.email }} · {{ emp.group }}</p>
+          <p class="detail-subtitle">{{ emp.group }}</p>
         </div>
       </div>
 
       <div class="detail-actions">
-        <a [routerLink]="['/employees', emp.username, 'edit']" class="btn btn-edit">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 20h9" />
-            <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-          </svg>
-          <span>Edit</span>
+        <a matButton="tonal" [routerLink]="['/employees', emp.username, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Edit
         </a>
-        <button type="button" class="btn btn-delete" (click)="openDeleteConfirm()">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="3 6 5 6 21 6" />
-            <path
-              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-            />
-          </svg>
-          <span>Delete</span>
+        <button
+          matButton="outlined"
+          type="button"
+          class="delete-btn"
+          [disabled]="deleting()"
+          (click)="openDeleteConfirm()"
+        >
+          <mat-icon>delete_outline</mat-icon>
+          Delete
         </button>
       </div>
-    </div>
+    </header>
 
-    <section class="surface-card detail-card" aria-label="Employee attributes">
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span class="detail-label">Username</span>
-          <span class="detail-value">{{ emp.username }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="detail-label">First name</span>
-          <span class="detail-value">{{ emp.firstName }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="detail-label">Last name</span>
-          <span class="detail-value">{{ emp.lastName }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="detail-label">Email</span>
-          <a class="detail-link" [href]="'mailto:' + emp.email">{{ emp.email }}</a>
-        </div>
-
-        <div class="detail-item">
-          <span class="detail-label">Birth date</span>
-          <span class="detail-value">{{ emp.birthDate | date: 'dd MMM yyyy, HH:mm' }}</span>
-        </div>
-
-        <div class="detail-item salary-highlight">
-          <span class="detail-label">Basic salary</span>
-          <span class="salary-value">{{ emp.basicSalary | rupiah }}</span>
-        </div>
-
-        <div class="detail-item">
-          <span class="detail-label">Status</span>
-          <div class="status-wrap">
-            <app-status-badge [status]="emp.status" />
+    <mat-card appearance="outlined" class="detail-card" aria-label="Employee details">
+      <mat-card-content class="detail-body">
+        <dl class="detail-grid">
+          <div class="detail-item">
+            <dt class="detail-label">Username</dt>
+            <dd class="detail-value">{{ emp.username }}</dd>
           </div>
-        </div>
 
-        <div class="detail-item">
-          <span class="detail-label">Group</span>
-          <span class="detail-value">{{ emp.group }}</span>
-        </div>
+          <div class="detail-item">
+            <dt class="detail-label">Email</dt>
+            <dd class="detail-value">
+              <a [href]="'mailto:' + emp.email">{{ emp.email }}</a>
+            </dd>
+          </div>
 
-        <div class="detail-item">
-          <span class="detail-label">Description (Timestamp)</span>
-          <span class="detail-value">{{ emp.description | date: 'dd MMM yyyy, HH:mm' }}</span>
-        </div>
-      </div>
+          <div class="detail-item">
+            <dt class="detail-label">First name</dt>
+            <dd class="detail-value">{{ emp.firstName }}</dd>
+          </div>
+
+          <div class="detail-item">
+            <dt class="detail-label">Last name</dt>
+            <dd class="detail-value">{{ emp.lastName }}</dd>
+          </div>
+
+          <div class="detail-item">
+            <dt class="detail-label">Date of Birth</dt>
+            <dd class="detail-value">{{ emp.birthDate | date: 'dd MMM yyyy' : 'UTC' }}</dd>
+          </div>
+
+          <div class="detail-item salary-highlight">
+            <dt class="detail-label">Basic salary</dt>
+            <dd class="salary-value">{{ emp.basicSalary | rupiah }}</dd>
+          </div>
+
+          <div class="detail-item">
+            <dt class="detail-label">Status</dt>
+            <dd class="detail-value">
+              <app-status-badge [status]="emp.status" />
+            </dd>
+          </div>
+
+          <div class="detail-item">
+            <dt class="detail-label">Group</dt>
+            <dd class="detail-value">{{ emp.group }}</dd>
+          </div>
+
+          <div class="detail-item full-span">
+            <dt class="detail-label">Description</dt>
+            <dd class="detail-value">{{ emp.description || 'N/A' }}</dd>
+          </div>
+        </dl>
+      </mat-card-content>
+
+      <mat-divider />
 
       <div class="detail-footer">
-        <span class="footer-note">
-          Returning to Employees preserves your previous search &amp; sort state.
-        </span>
-        <button type="button" class="btn btn-primary ok-btn" (click)="goBack()">OK</button>
+        <button matButton="outlined" type="button" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
       </div>
-    </section>
+    </mat-card>
   }
 </div>

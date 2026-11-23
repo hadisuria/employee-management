@@ -1,4 +1,4 @@
-<div class="page-container">
+<div class="page-shell">
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/employees">Employees</a>
     <span aria-hidden="true">/</span>
@@ -14,224 +14,191 @@
   </nav>
 
   @if (loading()) {
-    <div class="surface-card state-card">
-      <p class="empty-title">Loading employee record...</p>
-      <p class="empty-subtitle">Fetching current employee values.</p>
-    </div>
+    <mat-card appearance="outlined" class="state-card">
+      <mat-progress-bar mode="indeterminate" />
+      <mat-card-content class="state-content">
+        <p class="state-title">Loading employee record...</p>
+      </mat-card-content>
+    </mat-card>
   } @else if (notFound()) {
-    <div class="surface-card state-card">
-      <h1 class="empty-title">Employee not found</h1>
-      <p class="empty-subtitle">No employee record matches "{{ requestedUsername() }}".</p>
-      <a routerLink="/employees" class="btn btn-primary">Back to employees</a>
-    </div>
+    <mat-card appearance="outlined" class="state-card">
+      <mat-card-content class="state-content">
+        <mat-icon class="state-icon" aria-hidden="true">person_off</mat-icon>
+        <h1 class="state-title">Employee not found</h1>
+        <p class="state-subtitle">No record matches "{{ requestedUsername() }}".</p>
+        <a matButton="filled" routerLink="/employees">
+          <mat-icon>arrow_back</mat-icon>
+          Back to employees
+        </a>
+      </mat-card-content>
+    </mat-card>
   } @else {
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">{{ isEditMode() ? 'Edit Employee' : 'Add Employee' }}</h1>
-        <p class="page-subtitle">
-          {{
-            isEditMode()
-              ? 'Update employee details. All fields marked with * are mandatory.'
-              : 'All fields marked with * are mandatory.'
-          }}
-        </p>
-      </div>
-    </div>
+    <h1 class="page-title">{{ isEditMode() ? 'Edit Employee' : 'Add Employee' }}</h1>
 
-    <form class="surface-card form-card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <div class="form-grid">
-        <div class="form-field">
-          <label class="field-label" for="emp-username">
-            Username<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="emp-username"
-            type="text"
-            class="field-input"
-            formControlName="username"
-            placeholder="e.g. budi.santoso"
-            [class.is-invalid]="form.controls.username.invalid && form.controls.username.touched"
-          />
-          @if (form.controls.username.touched && form.controls.username.errors) {
-            @if (form.controls.username.errors['duplicate']) {
-              <span class="field-error">Username already exists</span>
-            } @else {
-              <span class="field-error">This field is required</span>
-            }
-          }
-        </div>
+    <mat-card appearance="outlined" class="form-card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <mat-card-content class="form-body">
+          <div class="form-grid">
+            <mat-form-field>
+              <mat-label>Username</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="username"
+                placeholder="e.g. budi.santoso"
+                required
+              />
+              @if (form.controls.username.touched && form.controls.username.errors) {
+                <mat-error>
+                  @if (form.controls.username.errors['duplicate']) {
+                    Username already exists
+                  } @else {
+                    Username is required
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
 
-        <div class="form-field">
-          <label class="field-label" for="emp-firstName">
-            First name<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="emp-firstName"
-            type="text"
-            class="field-input"
-            formControlName="firstName"
-            placeholder="Enter first name"
-            [class.is-invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
-          />
-          @if (form.controls.firstName.touched && form.controls.firstName.errors) {
-            <span class="field-error">This field is required</span>
-          }
-        </div>
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="name@company.co.id"
+                required
+              />
+              @if (form.controls.email.touched && form.controls.email.errors) {
+                <mat-error>
+                  @if (form.controls.email.errors['required']) {
+                    Email is required
+                  } @else {
+                    Enter a valid email address
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
 
-        <div class="form-field">
-          <label class="field-label" for="emp-lastName">
-            Last name<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="emp-lastName"
-            type="text"
-            class="field-input"
-            formControlName="lastName"
-            placeholder="Enter last name"
-            [class.is-invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
-          />
-          @if (form.controls.lastName.touched && form.controls.lastName.errors) {
-            <span class="field-error">This field is required</span>
-          }
-        </div>
+            <mat-form-field>
+              <mat-label>First name</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="firstName"
+                placeholder="First name"
+                required
+              />
+              <mat-error>First name is required</mat-error>
+            </mat-form-field>
 
-        <div class="form-field">
-          <label class="field-label" for="emp-email">
-            Email<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="emp-email"
-            type="email"
-            class="field-input"
-            formControlName="email"
-            placeholder="name@company.co.id"
-            [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched"
-          />
-          @if (form.controls.email.touched && form.controls.email.errors) {
-            @if (form.controls.email.errors['required']) {
-              <span class="field-error">This field is required</span>
-            } @else {
-              <span class="field-error">Please enter a valid email address</span>
-            }
-          }
-        </div>
+            <mat-form-field>
+              <mat-label>Last name</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="lastName"
+                placeholder="Last name"
+                required
+              />
+              <mat-error>Last name is required</mat-error>
+            </mat-form-field>
 
-        <div class="form-field">
-          <label class="field-label" for="emp-birthDate">
-            Birth date<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="emp-birthDate"
-            type="datetime-local"
-            class="field-input"
-            formControlName="birthDate"
-            [max]="maxDateTime()"
-            [class.is-invalid]="form.controls.birthDate.invalid && form.controls.birthDate.touched"
-          />
-          @if (form.controls.birthDate.touched && form.controls.birthDate.errors) {
-            @if (form.controls.birthDate.errors['maxToday']) {
-              <span class="field-error">Birth date cannot exceed today</span>
-            } @else {
-              <span class="field-error">This field is required</span>
-            }
-          } @else {
-            <span class="field-hint">Must not exceed today</span>
-          }
-        </div>
+            <mat-form-field>
+              <mat-label>Date of Birth</mat-label>
+              <input
+                matInput
+                [matDatepicker]="dobPicker"
+                [max]="todayDate"
+                formControlName="birthDate"
+                placeholder="MM/DD/YYYY"
+                required
+              />
+              <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
+              <mat-datepicker #dobPicker />
+              <mat-hint>Date cannot exceed today</mat-hint>
+              @if (form.controls.birthDate.touched && form.controls.birthDate.errors) {
+                <mat-error>
+                  @if (
+                    form.controls.birthDate.errors['matDatepickerMax'] ||
+                    form.controls.birthDate.errors['maxToday']
+                  ) {
+                    Date of Birth cannot exceed today
+                  } @else if (form.controls.birthDate.errors['matDatepickerParse']) {
+                    Enter a valid date
+                  } @else {
+                    Date of Birth is required
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
 
-        <div class="form-field">
-          <label class="field-label" for="emp-basicSalary">
-            Basic salary<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <div
-            class="salary-input-group"
-            [class.is-invalid]="
-              form.controls.basicSalary.invalid && form.controls.basicSalary.touched
-            "
-          >
-            <span class="salary-prefix">Rp</span>
-            <input
-              id="emp-basicSalary"
-              type="text"
-              inputmode="decimal"
-              class="salary-input"
-              formControlName="basicSalary"
-              placeholder="0.00"
+            <mat-form-field>
+              <mat-label>Basic salary</mat-label>
+              <span matTextPrefix>Rp&nbsp;</span>
+              <input
+                matInput
+                type="text"
+                inputmode="decimal"
+                formControlName="basicSalary"
+                placeholder="0.00"
+                required
+              />
+              <mat-hint>Numbers only, up to 2 decimals</mat-hint>
+              @if (form.controls.basicSalary.touched && form.controls.basicSalary.errors) {
+                <mat-error>
+                  @if (form.controls.basicSalary.errors['required']) {
+                    Basic salary is required
+                  } @else {
+                    Basic salary must be a valid number
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status" required placeholder="Select status">
+                @for (st of statusOptions; track st) {
+                  <mat-option [value]="st">{{ st }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>Status is required</mat-error>
+            </mat-form-field>
+
+            <app-searchable-select
+              label="Group"
+              [required]="true"
+              formControlName="group"
+              [options]="groups()"
+              placeholder="Select group"
+              searchPlaceholder="Search group..."
+              [invalid]="form.controls.group.invalid && form.controls.group.touched"
+              errorMessage="Group is required"
             />
+
+            <mat-form-field class="full-span">
+              <mat-label>Description</mat-label>
+              <textarea
+                matInput
+                rows="2"
+                formControlName="description"
+                placeholder="N/A or brief note"
+                required
+              ></textarea>
+              <mat-error>Description is required</mat-error>
+            </mat-form-field>
           </div>
-          @if (form.controls.basicSalary.touched && form.controls.basicSalary.errors) {
-            @if (form.controls.basicSalary.errors['required']) {
-              <span class="field-error">This field is required</span>
-            } @else {
-              <span class="field-error">Basic salary must be a valid number</span>
-            }
-          } @else {
-            <span class="field-hint">Numbers only, up to 2 decimals</span>
-          }
-        </div>
+        </mat-card-content>
 
-        <div class="form-field">
-          <label class="field-label" for="emp-status">
-            Status<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <select
-            id="emp-status"
-            class="field-select"
-            formControlName="status"
-            [class.is-invalid]="form.controls.status.invalid && form.controls.status.touched"
-          >
-            <option value="" disabled>Select status...</option>
-            @for (st of statusOptions; track st) {
-              <option [value]="st">{{ st }}</option>
-            }
-          </select>
-          @if (form.controls.status.touched && form.controls.status.errors) {
-            <span class="field-error">This field is required</span>
-          }
-        </div>
+        <mat-divider />
 
-        <div class="form-field">
-          <label class="field-label" for="emp-group">
-            Group<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <app-searchable-select
-            inputId="emp-group"
-            formControlName="group"
-            [options]="groups()"
-            placeholder="Select group..."
-            searchPlaceholder="Search group..."
-            [invalid]="form.controls.group.invalid && form.controls.group.touched"
-          />
-          @if (form.controls.group.touched && form.controls.group.errors) {
-            <span class="field-error">This field is required</span>
-          }
+        <div class="form-actions">
+          <a matButton="outlined" routerLink="/employees">Cancel</a>
+          <button matButton="filled" type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Saving...' : isEditMode() ? 'Save changes' : 'Save' }}
+          </button>
         </div>
-
-        <div class="form-field">
-          <label class="field-label" for="emp-description">
-            Description (Timestamp)<span class="required-star" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="emp-description"
-            type="datetime-local"
-            class="field-input"
-            formControlName="description"
-            [class.is-invalid]="
-              form.controls.description.invalid && form.controls.description.touched
-            "
-          />
-          @if (form.controls.description.touched && form.controls.description.errors) {
-            <span class="field-error">This field is required</span>
-          }
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <a routerLink="/employees" class="btn btn-outline">Cancel</a>
-        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-          {{ submitting() ? 'Saving...' : isEditMode() ? 'Save changes' : 'Save' }}
-        </button>
-      </div>
-    </form>
+      </form>
+    </mat-card>
   }
 </div>
