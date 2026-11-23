@@ -2,7 +2,7 @@
   <header class="page-header">
     <div class="title-group">
       <h1 class="page-title">Employees</h1>
-      <span class="record-count">{{ total() }} records</span>
+      <span class="record-count">{{ total() }} {{ total() === 1 ? 'record' : 'records' }}</span>
     </div>
 
     <div class="header-actions">

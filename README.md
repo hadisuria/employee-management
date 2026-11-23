@@ -1,26 +1,27 @@
 # Employee Management
 
-HR backoffice Single Page Application built with Angular 21, standalone components, Angular Signals, Reactive Forms, and `@angular/cdk/layout` responsive breakpoints.
+HR backoffice Single Page Application built with Angular 21, Angular Material M3, standalone components, Angular Signals, Reactive Forms, and `@angular/cdk/layout`.
 
 ## Features
 
-- **Authentication (`/login`):** Reactive Form validation, password visibility toggle, inline error states, loading state, `sessionStorage`-backed session state, and route guards (`authGuard` / `guestGuard`).
+- **Theme & Dark Mode:** Material 3 theming (`styles.scss` + `styles_theme-colors.scss`) with `light` / `dark` color-scheme toggle animating radially from the clicked toggle button via the View Transitions API (`ThemeService`) and persisted in `localStorage`.
+- **Authentication (`/login`):** Vertically centered login card with Reactive Form validation, password visibility toggle, inline error states, loading spinner, `sessionStorage`-backed session state, and route guards (`authGuard` / `guestGuard`).
 - **Employee List (`/employees`):**
-  - 120 deterministic dummy employees seeded across 10 groups (`src/app/core/data/`).
-  - Multi-parameter **AND** search (`Name / Username`, `Email`, searchable `Group` dropdown) plus `Reset filters`.
-  - Server-style sorting across `Username`, `Name`, `Email`, `Group`, `Basic Salary`, and `Status`.
-  - Page size selector (`10`, `25`, `50`, `100`) and pagination controls.
-  - Row **Edit** (navigates to `/employees/:username/edit`) and **Delete** (confirmation modal, red danger toast, and live list refresh).
-  - Responsive layout powered by `@angular/cdk/layout` (`Breakpoints.XSmall` renders stacked mobile cards and a mobile navigation drawer).
-- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Reactive Form (`EmployeeFormComponent`) with 9 mandatory fields, `birthDate <= today` validation, decimal salary validation, custom searchable group selector, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
-- **Employee Detail (`/employees/:username`):** Structured detail card formatting salaries as `Rp. xx.xxx,xx` (`RupiahPipe`), formatted timestamps, quick **Edit** and **Delete** actions, unknown-user fallback, and `OK` navigation preserving previous list filters, sort, and page state.
+  - 100 dummy employees seeded across 10 groups (`src/app/core/data/`) with date-only `birthDate` (`YYYY-MM-DD`) and string `description` (`N/A` or short HR notes).
+  - Multi-parameter **AND** search (`Name or username`, `Email`, searchable `Group` dropdown) plus `Reset`.
+  - **Hide / Show salary** toggle masking/revealing basic salaries (`Rp. ••••••••` ↔ `Rp. xx.xxx,xx`), preserved across detail navigation.
+  - 3-state Material sorting (`asc` → `desc` → default order) across `Username`, `Name`, `Email`, `Group`, `Basic Salary`, and `Status`.
+  - `MatPaginator` with page size selector (`10`, `25`, `50`, `100`).
+  - Row **Edit** (`/employees/:username/edit`) and **Delete** (Material `MatDialog` confirmation, red danger toast, and live list refresh).
+  - Responsive layout powered by `@angular/cdk/layout` (`Breakpoints.XSmall` renders mobile cards and a Material navigation menu).
+- **Create & Edit Employee (`/employees/add`, `/employees/:username/edit`):** Shared 2-column desktop / 1-column mobile Material Reactive Form (`EmployeeFormComponent`) with 9 mandatory fields, **Date of Birth** Material Datepicker (`birthDate <= today`), decimal salary validation, searchable `Group` selector, string **Description**, duplicate username detection (`409`), green toast on create, and amber warning toast on update.
+- **Employee Detail (`/employees/:username`):** Structured detail card showing formatted `Date of Birth` (date-only `dd MMM yyyy`), plain string `Description`, `Basic salary` (`Rp. xx.xxx,xx` via `RupiahPipe`), `Status` badge, **Edit** / **Delete** actions, unknown-user fallback, and **Back** navigation preserving previous list filters, sort, page, and salary visibility state.
 
 ## Environment
 
 - **Node.js:** `v20.19.2`
 - **npm:** `10.8.2`
 - **Angular:** `^21.2.0` (`@angular/cli` `21.2.30`, `@angular/material` `^21.2.14`)
-- **Test Runner:** Vitest (`^4.0.8`)
 
 ## Getting Started
 
@@ -36,17 +37,16 @@ Open `http://localhost:4200` in your browser.
 ### Demo Login Credentials
 
 - **Username:** `admin`
-- **Password:** `admin123`
+- **Password:** `123`
 
 ## Scripts
 
 - `npm start` — Run local dev server at `http://localhost:4200`
 - `npm run build` — Build production bundle into `dist/employee-management`
-- `npm test -- --watch=false` — Run Vitest unit tests
 
 ## Switching to a Real Backend
 
-API calls live in `src/app/core/api/` (`AuthApiService` and `EmployeeApiService`) and use standard Angular `HttpClient` (`POST /api/auth/login`, `GET /api/groups`, `GET/POST /api/employees`, `GET/PUT/DELETE /api/employees/:username`). During local/standalone runs without a backend, requests to `/api/*` are handled by `mockApiInterceptor` registered in `environment.httpInterceptors`.
+API calls live in `src/app/core/api/` (`AuthApiService` and `EmployeeApiService`) and use standard Angular `HttpClient` (`POST /api/auth/login`, `GET /api/groups`, `GET/POST /api/employees`, `GET/PUT/DELETE /api/employees/:username`). During standalone runs without a backend, requests to `/api/*` are handled by `mockApiInterceptor` registered in `environment.httpInterceptors`.
 
 To connect a real REST backend in production:
 

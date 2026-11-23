@@ -200,6 +200,12 @@
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
+
+    a,
+    button {
+      white-space: nowrap;
+      padding: 0 12px;
+    }
   }
 
   .filter-grid {
