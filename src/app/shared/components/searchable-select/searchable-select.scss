@@ -8,6 +8,9 @@
 }
 
 ::ng-deep .searchable-select-panel {
+  background-color: light-dark(#ffffff, #1d1f27);
+  border-radius: 8px;
+
   .select-search-box {
     position: sticky;
     top: 0;
@@ -15,8 +18,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 14px;
-    background-color: var(--mat-sys-surface-container);
+    padding: 10px 14px;
+    background-color: light-dark(#ffffff, #1d1f27);
     border-bottom: 1px solid var(--mat-sys-outline-variant);
   }
 

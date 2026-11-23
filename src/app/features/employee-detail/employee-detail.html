@@ -38,14 +38,18 @@
       </div>
 
       <div class="detail-actions">
-        <a matButton="tonal" [routerLink]="['/employees', emp.username, 'edit']">
+        <a
+          matButton="outlined"
+          class="action-edit"
+          [routerLink]="['/employees', emp.username, 'edit']"
+        >
           <mat-icon>edit</mat-icon>
           Edit
         </a>
         <button
           matButton="outlined"
           type="button"
-          class="delete-btn"
+          class="action-delete"
           [disabled]="deleting()"
           (click)="openDeleteConfirm()"
         >
@@ -64,13 +68,6 @@
           </div>
 
           <div class="detail-item">
-            <dt class="detail-label">Email</dt>
-            <dd class="detail-value">
-              <a [href]="'mailto:' + emp.email">{{ emp.email }}</a>
-            </dd>
-          </div>
-
-          <div class="detail-item">
             <dt class="detail-label">First name</dt>
             <dd class="detail-value">{{ emp.firstName }}</dd>
           </div>
@@ -78,6 +75,13 @@
           <div class="detail-item">
             <dt class="detail-label">Last name</dt>
             <dd class="detail-value">{{ emp.lastName }}</dd>
+          </div>
+
+          <div class="detail-item">
+            <dt class="detail-label">Email</dt>
+            <dd class="detail-value">
+              <a [href]="'mailto:' + emp.email">{{ emp.email }}</a>
+            </dd>
           </div>
 
           <div class="detail-item">

@@ -11,8 +11,9 @@ import { EmployeeStatus } from '../../../core/models/employee.model';
     .status-pill {
       display: inline-flex;
       align-items: center;
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid transparent;
       font-size: 12px;
       line-height: 16px;
       font-weight: 500;
@@ -22,21 +23,25 @@ import { EmployeeStatus } from '../../../core/models/employee.model';
 
     .status-pill[data-variant='active'] {
       background-color: light-dark(#dcfce7, #14532d);
+      border-color: light-dark(#86efac, #166534);
       color: light-dark(#166534, #bbf7d0);
     }
 
     .status-pill[data-variant='leave'] {
-      background-color: light-dark(#fef3c7, #78350f);
-      color: light-dark(#92400e, #fde68a);
+      background-color: var(--mat-sys-tertiary-container);
+      border-color: var(--mat-sys-tertiary-fixed-dim);
+      color: var(--mat-sys-on-tertiary-container);
     }
 
     .status-pill[data-variant='probation'] {
-      background-color: light-dark(#dbeafe, #1e3a8a);
-      color: light-dark(#1e40af, #bfdbfe);
+      background-color: var(--mat-sys-primary-container);
+      border-color: light-dark(#81aaff, #2973e5);
+      color: var(--mat-sys-on-primary-container);
     }
 
     .status-pill[data-variant='inactive'] {
       background-color: var(--mat-sys-surface-container-high);
+      border-color: var(--mat-sys-outline-variant);
       color: var(--mat-sys-on-surface-variant);
     }
   `,

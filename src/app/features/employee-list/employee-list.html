@@ -9,6 +9,7 @@
       <button
         matButton="outlined"
         type="button"
+        [class.salary-hidden-active]="!listState.showSalary()"
         (click)="listState.toggleSalaryVisibility()"
       >
         <mat-icon>{{ listState.showSalary() ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -76,14 +77,14 @@
         }
 
         <button
-          matButton="outlined"
+          matButton
           type="button"
           class="reset-btn"
           [disabled]="!hasActiveFilters()"
           (click)="onResetFilters()"
         >
           <mat-icon>restart_alt</mat-icon>
-          Reset
+          Reset filters
         </button>
       </div>
     </mat-card-content>
@@ -135,7 +136,13 @@
             </ng-container>
 
             <ng-container matColumnDef="basicSalary">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="col-salary">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                arrowPosition="before"
+                class="col-salary"
+              >
                 Basic Salary
               </th>
               <td mat-cell *matCellDef="let emp" class="cell-salary">
@@ -159,8 +166,8 @@
               <td mat-cell *matCellDef="let emp" class="cell-actions">
                 <div class="action-group">
                   <button
-                    matIconButton
                     type="button"
+                    class="icon-action action-edit"
                     matTooltip="Edit"
                     [attr.aria-label]="'Edit ' + emp.username"
                     (click)="onEdit($event, emp)"
@@ -168,9 +175,8 @@
                     <mat-icon>edit</mat-icon>
                   </button>
                   <button
-                    matIconButton
                     type="button"
-                    class="delete-icon-btn"
+                    class="icon-action action-delete"
                     matTooltip="Delete"
                     [attr.aria-label]="'Delete ' + emp.username"
                     (click)="onDelete($event, emp)"
@@ -234,14 +240,19 @@
             </div>
 
             <div class="card-actions">
-              <button matButton="tonal" type="button" (click)="onEdit($event, emp)">
+              <button
+                matButton="outlined"
+                type="button"
+                class="action-edit"
+                (click)="onEdit($event, emp)"
+              >
                 <mat-icon>edit</mat-icon>
                 Edit
               </button>
               <button
                 matButton="outlined"
                 type="button"
-                class="delete-mobile-btn"
+                class="action-delete"
                 (click)="onDelete($event, emp)"
               >
                 <mat-icon>delete_outline</mat-icon>

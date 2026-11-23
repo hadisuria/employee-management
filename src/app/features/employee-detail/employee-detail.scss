@@ -16,11 +16,6 @@
   }
 }
 
-.state-card,
-.detail-card {
-  background-color: var(--mat-sys-surface);
-}
-
 .state-card {
   overflow: hidden;
 }
@@ -71,8 +66,9 @@
   height: 52px;
   flex-shrink: 0;
   border-radius: 50%;
+  border: 1px solid light-dark(#aec6ff, #004395);
   background-color: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container);
+  color: var(--mat-sys-primary);
   font: var(--mat-sys-title-large);
   font-weight: 600;
 }
@@ -101,11 +97,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.delete-btn {
-  color: var(--mat-sys-error);
-  --mat-button-outlined-outline-color: var(--mat-sys-error);
 }
 
 .detail-body {
@@ -154,7 +145,9 @@
 .salary-highlight {
   padding: 12px 16px;
   border-radius: 8px;
-  background-color: var(--mat-sys-surface-container);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-left: 3px solid var(--mat-sys-tertiary-fixed-dim);
+  background-color: light-dark(#f8fafc, #242733);
 }
 
 .salary-value {

@@ -11,8 +11,8 @@ interface NameSeed {
 
 const FEATURED_SEEDS: readonly NameSeed[] = [
   {
-    firstName: 'Budi',
-    lastName: 'Santoso',
+    firstName: 'Hadi',
+    lastName: 'Suria',
     group: 'Information Technology',
     status: 'Active',
   },
@@ -73,7 +73,7 @@ const FEATURED_SEEDS: readonly NameSeed[] = [
 ];
 
 const FIRST_NAMES: readonly string[] = [
-  'Budi',
+  'Hadi',
   'Siti',
   'Andi',
   'Dewi',
@@ -84,25 +84,43 @@ const FIRST_NAMES: readonly string[] = [
   'Fajar',
   'Tari',
   'Dimas',
-  'Rina',
-  'Bagas',
+  'David',
+  'Jason',
   'Intan',
   'Yoga',
+  'Rina',
+  'Budi',
+  'Rizal',
+  'Lina',
+  'Rudi',
+  'Nina',
+  'Rani',
+  'Dian',
+  'Rizki',
+  'Sari',
 ];
 
 const LAST_NAMES: readonly string[] = [
+  'Suria',
   'Santoso',
-  'Rahmawati',
   'Wijaya',
   'Lestari',
   'Pratama',
-  'Putri',
-  'Kusuma',
+  'Kurniawan',
+  'Fernando',
   'Wulandari',
   'Nugroho',
   'Permata',
   'Hidayat',
   'Saputra',
+  'Gunawan',
+  'Ramadhan',
+  'Putra',
+  'Putri',
+  'Kusuma',
+  'Sari',
+  'Halim',
+  'Prasetyo',
 ];
 
 const STATUSES: readonly EmployeeStatus[] = [
@@ -160,9 +178,7 @@ export function generateDummyEmployees(count = 100): Employee[] {
 
     const computedSalary = Math.round((6_000_000 + Math.random() * 20_000_000) * 100) / 100;
     const description =
-      Math.random() < 0.72
-        ? 'N/A'
-        : RANDOM_NOTES[Math.floor(Math.random() * RANDOM_NOTES.length)];
+      Math.random() < 0.72 ? 'N/A' : RANDOM_NOTES[Math.floor(Math.random() * RANDOM_NOTES.length)];
 
     employees.push({
       username,

@@ -32,9 +32,14 @@
   gap: 10px;
 }
 
+.salary-hidden-active {
+  --mat-button-outlined-outline-color: var(--mat-sys-tertiary-fixed-dim);
+  --mat-button-outlined-label-text-color: var(--mat-sys-on-tertiary-container);
+  background-color: var(--mat-sys-tertiary-container);
+}
+
 .filter-card {
   margin-bottom: 16px;
-  background-color: var(--mat-sys-surface);
 }
 
 .filter-grid {
@@ -45,12 +50,11 @@
 }
 
 .reset-btn {
-  height: 56px;
+  height: 48px;
 }
 
 .table-card {
   overflow: hidden;
-  background-color: var(--mat-sys-surface);
 }
 
 .table-scroll {
@@ -64,7 +68,18 @@
 
   table {
     width: 100%;
-    background-color: var(--mat-sys-surface);
+  }
+
+  th.mat-mdc-header-cell {
+    background-color: light-dark(#f8fafc, #242733);
+    font-size: 12px;
+    font-weight: 600;
+
+    &[aria-sort='ascending'],
+    &[aria-sort='descending'] {
+      background-color: var(--mat-sys-primary-container);
+      color: var(--mat-sys-primary);
+    }
   }
 }
 
@@ -73,7 +88,7 @@
   transition: background-color 120ms ease;
 
   &:hover {
-    background-color: var(--mat-sys-surface-container-low);
+    background-color: light-dark(#f8fafc, #242733);
   }
 }
 
@@ -102,10 +117,7 @@
   justify-content: flex-end;
 }
 
-.col-actions {
-  text-align: center;
-}
-
+.col-actions,
 .cell-actions {
   text-align: center;
   white-space: nowrap;
@@ -114,12 +126,35 @@
 .action-group {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
-.delete-icon-btn,
-.delete-mobile-btn {
-  color: var(--mat-sys-error);
+.icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: filter 120ms ease;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+mat-paginator {
+  background-color: transparent;
+  border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
 .empty-block {
@@ -145,7 +180,6 @@
 
 .employee-card {
   cursor: pointer;
-  background-color: var(--mat-sys-surface);
 }
 
 .card-top {

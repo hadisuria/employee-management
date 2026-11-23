@@ -1,3 +1,4 @@
+<div class="brand-accent-bar" aria-hidden="true"></div>
 <mat-toolbar class="app-toolbar">
   <div class="toolbar-inner">
     <div class="toolbar-left">
@@ -9,15 +10,8 @@
       </a>
 
       @if (!viewport.isMobile()) {
-        <nav aria-label="Main navigation">
-          <a
-            matButton
-            routerLink="/employees"
-            routerLinkActive="is-active"
-            class="nav-btn"
-          >
-            Employees
-          </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a routerLink="/employees" routerLinkActive="is-active" class="nav-link">Employees</a>
         </nav>
       }
     </div>
@@ -26,6 +20,8 @@
       <button
         matIconButton
         type="button"
+        class="theme-toggle-btn"
+        [class.is-dark]="theme.isDark()"
         [matTooltip]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
         [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
         (click)="theme.toggle($event)"
@@ -45,7 +41,7 @@
 
         <mat-menu #mobileMenu="matMenu">
           <div class="menu-user">
-            <mat-icon>account_circle</mat-icon>
+            <span class="user-avatar" aria-hidden="true">{{ userInitial() }}</span>
             <span>{{ authState.username() }}</span>
           </div>
           <mat-divider />
@@ -59,12 +55,12 @@
           </button>
         </mat-menu>
       } @else {
-        <span class="user-label">
-          <mat-icon>account_circle</mat-icon>
-          {{ authState.username() }}
-        </span>
+        <div class="user-chip">
+          <span class="user-avatar" aria-hidden="true">{{ userInitial() }}</span>
+          <span>{{ authState.username() }}</span>
+        </div>
 
-        <button matButton="outlined" type="button" (click)="logout()">
+        <button matButton type="button" class="logout-btn" (click)="logout()">
           <mat-icon>logout</mat-icon>
           Logout
         </button>

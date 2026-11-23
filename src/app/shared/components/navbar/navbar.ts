@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -33,6 +33,11 @@ export class NavbarComponent {
   readonly authState = inject(AuthStateService);
   readonly theme = inject(ThemeService);
   readonly viewport = inject(ViewportService);
+
+  readonly userInitial = computed(() => {
+    const name = this.authState.username().trim();
+    return name ? name.charAt(0).toUpperCase() : 'A';
+  });
 
   logout(): void {
     this.authState.logout();

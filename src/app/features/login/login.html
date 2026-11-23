@@ -2,6 +2,7 @@
   matIconButton
   type="button"
   class="theme-corner-btn"
+  [class.is-dark]="theme.isDark()"
   [matTooltip]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
   [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
   (click)="theme.toggle($event)"
@@ -11,6 +12,7 @@
 
 <div class="login-page">
   <mat-card appearance="outlined" class="login-card" aria-labelledby="login-heading">
+    <div class="brand-accent-bar" aria-hidden="true"></div>
     <mat-card-content class="card-body">
       <div class="login-header">
         <span class="brand-mark" aria-hidden="true">
@@ -78,7 +80,7 @@
         </button>
       </form>
 
-      <p class="demo-hint">Demo credentials: admin / 123</p>
+      <div class="demo-hint">Demo credentials: admin / 123</div>
     </mat-card-content>
   </mat-card>
 </div>

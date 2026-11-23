@@ -60,26 +60,6 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input
-                matInput
-                type="email"
-                formControlName="email"
-                placeholder="name@company.co.id"
-                required
-              />
-              @if (form.controls.email.touched && form.controls.email.errors) {
-                <mat-error>
-                  @if (form.controls.email.errors['required']) {
-                    Email is required
-                  } @else {
-                    Enter a valid email address
-                  }
-                </mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
               <mat-label>First name</mat-label>
               <input
                 matInput
@@ -101,6 +81,26 @@
                 required
               />
               <mat-error>Last name is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="name@company.co.id"
+                required
+              />
+              @if (form.controls.email.touched && form.controls.email.errors) {
+                <mat-error>
+                  @if (form.controls.email.errors['required']) {
+                    Email is required
+                  } @else {
+                    Enter a valid email address
+                  }
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
