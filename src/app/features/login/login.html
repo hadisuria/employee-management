@@ -1,140 +1,83 @@
+<button
+  matIconButton
+  type="button"
+  class="theme-corner-btn"
+  [matTooltip]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+  [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+  (click)="theme.toggle($event)"
+>
+  <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+</button>
+
 <div class="login-page">
-  <section class="surface-card login-card" aria-labelledby="login-heading">
-    <div class="login-header">
-      <div class="brand-row">
-        <span class="brand-badge" aria-hidden="true">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
+  <mat-card appearance="outlined" class="login-card" aria-labelledby="login-heading">
+    <mat-card-content class="card-body">
+      <div class="login-header">
+        <span class="brand-mark" aria-hidden="true">
+          <mat-icon>groups</mat-icon>
         </span>
-        <span class="brand-title">Employee Management</span>
+        <h1 id="login-heading" class="login-title">Employee Management</h1>
+        <p class="login-subtitle">Sign in to continue</p>
       </div>
 
-      <h1 id="login-heading" class="login-title">Welcome back</h1>
-      <p class="login-subtitle">Sign in to manage employee records</p>
-    </div>
+      @if (authError()) {
+        <div class="alert-error" role="alert">
+          <mat-icon aria-hidden="true">error_outline</mat-icon>
+          <span>{{ authError() }}</span>
+        </div>
+      }
 
-    @if (authError()) {
-      <div class="alert-error" role="alert">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        <span>{{ authError() }}</span>
-      </div>
-    }
-
-    <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <div class="form-field">
-        <label class="field-label" for="login-username">
-          Username<span class="required-star" aria-hidden="true">*</span>
-        </label>
-        <input
-          id="login-username"
-          type="text"
-          class="field-input"
-          formControlName="username"
-          placeholder="Enter your username"
-          autocomplete="username"
-          [class.is-invalid]="form.controls.username.invalid && form.controls.username.touched"
-        />
-        @if (form.controls.username.touched && form.controls.username.errors?.['required']) {
-          <span class="field-error">Username is required</span>
-        }
-      </div>
-
-      <div class="form-field">
-        <label class="field-label" for="login-password">
-          Password<span class="required-star" aria-hidden="true">*</span>
-        </label>
-        <div class="password-wrapper">
+      <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <mat-form-field class="full-width">
+          <mat-label>Username</mat-label>
           <input
-            id="login-password"
+            matInput
+            type="text"
+            formControlName="username"
+            placeholder="Enter username"
+            autocomplete="username"
+          />
+          @if (form.controls.username.touched && form.controls.username.errors?.['required']) {
+            <mat-error>Username is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
             [type]="showPassword() ? 'text' : 'password'"
-            class="field-input password-input"
             formControlName="password"
-            placeholder="Enter your password"
+            placeholder="Enter password"
             autocomplete="current-password"
-            [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched"
           />
           <button
+            matIconButton
+            matSuffix
             type="button"
-            class="eye-toggle"
             [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
             (click)="togglePassword()"
           >
-            @if (showPassword()) {
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                />
-                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                <line x1="1" y1="1" x2="23" y2="23" />
-              </svg>
-            } @else {
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            }
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-        </div>
-        @if (form.controls.password.touched && form.controls.password.errors?.['required']) {
-          <span class="field-error">Password is required</span>
-        }
-      </div>
+          @if (form.controls.password.touched && form.controls.password.errors?.['required']) {
+            <mat-error>Password is required</mat-error>
+          }
+        </mat-form-field>
 
-      <button type="submit" class="btn btn-primary submit-btn" [disabled]="submitting()">
-        @if (submitting()) {
-          <span class="spinner" aria-hidden="true"></span>
-          <span>Signing in...</span>
-        } @else {
-          <span>Sign in</span>
-        }
-      </button>
-    </form>
+        <button matButton="filled" type="submit" class="submit-btn" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="submit-content">
+              <mat-spinner diameter="18" class="submit-spinner" />
+              <span>Signing in...</span>
+            </span>
+          } @else {
+            <span>Sign in</span>
+          }
+        </button>
+      </form>
 
-    <div class="demo-hint">Demo login: admin / 123</div>
-  </section>
+      <p class="demo-hint">Demo credentials: admin / 123</p>
+    </mat-card-content>
+  </mat-card>
 </div>
