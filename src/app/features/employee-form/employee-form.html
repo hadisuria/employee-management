@@ -39,7 +39,7 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
         <mat-card-content class="form-body">
           <div class="form-grid">
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>Username</mat-label>
               <input
                 matInput
@@ -59,7 +59,7 @@
               }
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>Email</mat-label>
               <input
                 matInput
@@ -79,7 +79,7 @@
               }
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>First name</mat-label>
               <input
                 matInput
@@ -91,7 +91,7 @@
               <mat-error>First name is required</mat-error>
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>Last name</mat-label>
               <input
                 matInput
@@ -103,7 +103,7 @@
               <mat-error>Last name is required</mat-error>
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>Date of Birth</mat-label>
               <input
                 matInput
@@ -132,7 +132,7 @@
               }
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>Basic salary</mat-label>
               <span matTextPrefix>Rp&nbsp;</span>
               <input
@@ -155,7 +155,7 @@
               }
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="outline">
               <mat-label>Status</mat-label>
               <mat-select formControlName="status" required placeholder="Select status">
                 @for (st of statusOptions; track st) {
@@ -176,7 +176,7 @@
               errorMessage="Group is required"
             />
 
-            <mat-form-field class="full-span">
+            <mat-form-field appearance="outline" class="full-span">
               <mat-label>Description</mat-label>
               <textarea
                 matInput

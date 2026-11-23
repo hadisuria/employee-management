@@ -1,7 +1,11 @@
 <app-toast-notification />
 
 @if (authState.isAuthenticated()) {
-  <app-navbar />
+  @defer (when authState.isAuthenticated()) {
+    <app-navbar />
+  } @placeholder {
+    <div class="navbar-placeholder"></div>
+  }
 }
 
 <main class="app-main">

@@ -25,7 +25,7 @@
   <mat-card appearance="outlined" class="filter-card">
     <mat-card-content>
       <div class="filter-grid">
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Name or username</mat-label>
           <mat-icon matPrefix>search</mat-icon>
           <input
@@ -37,7 +37,7 @@
           />
         </mat-form-field>
 
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Email</mat-label>
           <mat-icon matPrefix>mail_outline</mat-icon>
           <input
@@ -62,7 +62,7 @@
         />
 
         @if (viewport.isMobile()) {
-          <mat-form-field subscriptSizing="dynamic">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Sort by</mat-label>
             <mat-select
               [value]="currentSortValue()"

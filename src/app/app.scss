@@ -4,6 +4,12 @@
   min-height: 100vh;
 }
 
+.navbar-placeholder {
+  height: 64px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background-color: var(--mat-sys-surface);
+}
+
 .app-main {
   flex: 1;
   display: flex;
