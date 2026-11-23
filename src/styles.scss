@@ -14,6 +14,14 @@ html {
       density: 0,
     )
   );
+  @include mat.theme-overrides(
+    (
+      title-large: 600 1.25rem / 1.75rem Inter,
+      title-large-size: 1.25rem,
+      title-large-line-height: 1.75rem,
+      title-large-weight: 600,
+    )
+  );
   @include mat.button-overrides(
     (
       filled-container-shape: 8px,
@@ -34,6 +42,24 @@ html {
       outlined-outline-color: var(--mat-sys-outline-variant),
       container-height: 48px,
       container-vertical-padding: 12px,
+      container-text-size: 0.875rem,
+      container-text-line-height: 1.25rem,
+      outlined-label-text-size: 0.875rem,
+      filled-label-text-size: 0.875rem,
+      subscript-text-size: 0.75rem,
+      subscript-text-line-height: 1rem,
+    )
+  );
+  @include mat.select-overrides(
+    (
+      trigger-text-size: 0.875rem,
+      trigger-text-line-height: 1.25rem,
+    )
+  );
+  @include mat.option-overrides(
+    (
+      label-text-size: 0.875rem,
+      label-text-line-height: 1.25rem,
     )
   );
   @include mat.card-overrides(
@@ -47,6 +73,11 @@ html {
     (
       container-shape: 12px,
       container-color: light-dark(#ffffff, #1d1f27),
+      subhead-size: 1.25rem,
+      subhead-line-height: 1.75rem,
+      subhead-weight: 600,
+      supporting-text-size: 0.875rem,
+      supporting-text-line-height: 1.25rem,
     )
   );
   @include mat.table-overrides(
@@ -54,6 +85,11 @@ html {
       background-color: light-dark(#ffffff, #1d1f27),
       header-container-height: 48px,
       header-headline-color: var(--mat-sys-on-surface-variant),
+      header-headline-size: 0.75rem,
+      header-headline-line-height: 1rem,
+      header-headline-weight: 600,
+      row-item-label-text-size: 0.875rem,
+      row-item-label-text-line-height: 1.25rem,
       row-item-outline-color: var(--mat-sys-outline-variant),
     )
   );

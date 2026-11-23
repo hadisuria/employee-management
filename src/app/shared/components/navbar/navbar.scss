@@ -126,7 +126,7 @@
   border-radius: 9999px;
   background-color: var(--mat-sys-primary);
   color: var(--mat-sys-on-primary);
-  font-size: 12px;
+  font: var(--mat-sys-label-medium);
   font-weight: 600;
 }
 
@@ -146,9 +146,5 @@
 @media (max-width: 599.98px) {
   .toolbar-inner {
     padding: 0 16px;
-  }
-
-  .brand-name {
-    font-size: 15px;
   }
 }

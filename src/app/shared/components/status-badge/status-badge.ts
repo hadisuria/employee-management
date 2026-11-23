@@ -14,9 +14,7 @@ import { EmployeeStatus } from '../../../core/models/employee.model';
       padding: 3px 10px;
       border-radius: 9999px;
       border: 1px solid transparent;
-      font-size: 12px;
-      line-height: 16px;
-      font-weight: 500;
+      font: var(--mat-sys-label-medium);
       white-space: nowrap;
       flex-shrink: 0;
     }

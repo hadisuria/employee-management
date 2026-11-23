@@ -72,8 +72,6 @@
 
   th.mat-mdc-header-cell {
     background-color: light-dark(#f8fafc, #242733);
-    font-size: 12px;
-    font-weight: 600;
 
     &[aria-sort='ascending'],
     &[aria-sort='descending'] {
@@ -164,7 +162,7 @@ mat-paginator {
 
 .empty-title {
   margin: 0 0 12px;
-  font: var(--mat-sys-title-medium);
+  font: var(--mat-sys-title-large);
   color: var(--mat-sys-on-surface);
 }
 
@@ -230,6 +228,11 @@ mat-paginator {
 }
 
 @media (max-width: 599.98px) {
+  .page-title {
+    font: var(--mat-sys-headline-small);
+    font-weight: 600;
+  }
+
   .header-actions {
     width: 100%;
     display: grid;
